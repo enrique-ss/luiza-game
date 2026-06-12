@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dia Comum</title>
+    <title>Um dia Doce</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
         <!-- ==================== TELA: MENU PRINCIPAL ==================== -->
         <div id="screen-menu" class="screen active">
             <div class="logo-container">
-                <h1 class="game-title">Dia Comum</h1>
+                <h1 class="game-title">Um dia Doce</h1>
             </div>
             
             <div class="menu-buttons">
@@ -34,7 +34,7 @@
                     <i class="fa-solid fa-play"></i> Iniciar Jogo
                 </button>
                 <button class="btn" onclick="openModal('about-modal')">
-                    <i class="fa-solid fa-circle-info"></i> Sobre o Presente
+                    <i class="fa-solid fa-heart"></i> Sobre o Presente
                 </button>
             </div>
         </div>
@@ -44,14 +44,12 @@
             
             <!-- HUD Superior -->
             <div class="hud-header">
-                <!-- Status da Julia e Hora -->
+                <!-- Status da Luiza e Hora -->
                 <div style="display: flex; gap: 0.75rem; align-items: center; pointer-events: auto;">
-                    <!-- Widget do Relógio e Clima -->
-                    <div class="hud-time" title="Hora do Dia e Clima">
+                    <!-- Widget do Relógio -->
+                    <div class="hud-time" title="Hora do Dia">
                         <i class="fa-regular fa-clock"></i>
                         <span id="hud-time-val">05:30</span>
-                        <span class="hud-time-sep">|</span>
-                        <span id="hud-weather-icon">🌙</span>
                     </div>
 
                     <div class="hud-card hud-meters-card">
@@ -65,15 +63,6 @@
                                     <div id="bar-energia" class="meter-bar-inner bar-energy" style="width: 30%"></div>
                                 </div>
                             </div>
-                            <div class="meter-group">
-                                <div class="meter-label">
-                                    <span>Dores</span>
-                                    <span id="val-dor">80%</span>
-                                </div>
-                                <div class="meter-bar-outer">
-                                    <div id="bar-dor" class="meter-bar-inner bar-pain" style="width: 80%"></div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,12 +74,6 @@
                         <div class="hud-affinity">
                             <div class="affinity-badge" title="Corações com Enrique">
                                 Enrique: <span id="score-enrique" class="heart-meter"></span>
-                            </div>
-                            <div class="affinity-badge" title="Corações com Otávio">
-                                Otávio: <span id="score-otavio" class="heart-meter"></span>
-                            </div>
-                            <div class="affinity-badge affinity-ruan" title="Corações com Ruan">
-                                Ruan: <span id="score-ruan" class="heart-meter"></span>
                             </div>
                         </div>
                     </div>
@@ -117,7 +100,7 @@
                     <div class="drawer-body">
                         <!-- Energia e Dores no Mobile -->
                         <div class="drawer-section">
-                            <h4>Status da Julia</h4>
+                            <h4>Status da Luiza</h4>
                             <div class="drawer-meters">
                                 <div class="meter-group">
                                     <div class="meter-label">
@@ -126,15 +109,6 @@
                                     </div>
                                     <div class="meter-bar-outer">
                                         <div id="drawer-bar-energia" class="meter-bar-inner bar-energy" style="width: 30%"></div>
-                                    </div>
-                                </div>
-                                <div class="meter-group">
-                                    <div class="meter-label">
-                                        <span>Dores</span>
-                                        <span id="drawer-val-dor">80%</span>
-                                    </div>
-                                    <div class="meter-bar-outer">
-                                        <div id="drawer-bar-dor" class="meter-bar-inner bar-pain" style="width: 80%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -147,18 +121,12 @@
                                 <div class="affinity-badge">
                                     Enrique: <span id="drawer-score-enrique" class="heart-meter"></span>
                                 </div>
-                                <div class="affinity-badge">
-                                    Otávio: <span id="drawer-score-otavio" class="heart-meter"></span>
-                                </div>
-                                <div class="affinity-badge affinity-ruan">
-                                    Ruan: <span id="drawer-score-ruan" class="heart-meter"></span>
-                                </div>
                             </div>
                         </div>
                         
                         <!-- Link para abrir o diário -->
                         <div class="drawer-section">
-                            <h4>Diário da Ju</h4>
+                            <h4>Diário da Luiza</h4>
                             <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="showHistoryFromDrawer()">
                                 <i class="fa-solid fa-book-open"></i> Abrir Diário
                             </button>
@@ -170,21 +138,13 @@
 
             <!-- Camada de Sprites dos Personagens -->
             <div class="sprites-layer">
-                <!-- Julia -->
-                <div id="sprite-julia" class="character-sprite-container">
-                    <img id="img-julia" class="sprite-img" src="" alt="Julia" onerror="fallbackSprite('julia')">
+                <!-- Luiza -->
+                <div id="sprite-luiza" class="character-sprite-container">
+                    <img id="img-luiza" class="sprite-img" src="" alt="Luiza" onerror="fallbackSprite('luiza')">
                 </div>
                 <!-- Enrique -->
                 <div id="sprite-enrique" class="character-sprite-container">
                     <img id="img-enrique" class="sprite-img" src="" alt="Enrique" onerror="fallbackSprite('enrique')">
-                </div>
-                <!-- Otávio -->
-                <div id="sprite-otavio" class="character-sprite-container">
-                    <img id="img-otavio" class="sprite-img" src="" alt="Otávio" onerror="fallbackSprite('otavio')">
-                </div>
-                <!-- Ruan -->
-                <div id="sprite-ruan" class="character-sprite-container">
-                    <img id="img-ruan" class="sprite-img" src="" alt="Ruan" onerror="fallbackSprite('ruan')">
                 </div>
             </div>
 
@@ -220,8 +180,8 @@
                     <img id="wa-avatar-img" src="" alt="" style="display: none;">
                 </div>
                 <div class="wa-chat-info">
-                    <div class="wa-chat-name" id="wa-chat-name">Grupo do Senac 💻🍻</div>
-                    <div class="wa-chat-status" id="wa-chat-status">Otávio, Enrique, Você</div>
+                    <div class="wa-chat-name" id="wa-chat-name">Enrique �</div>
+                    <div class="wa-chat-status" id="wa-chat-status">Enrique, Você</div>
                 </div>
             </div>
             
@@ -241,8 +201,8 @@
         <div id="screen-goodnight" class="screen">
             <div class="stars-container" id="stars-container-goodnight"></div>
             <div class="goodnight-container">
-                <h1 class="goodnight-title">Boa noite, Ju.</h1>
-                <p class="goodnight-subtitle">Espero que teu dia comum tenha sido divertio.</p>
+                <h1 class="goodnight-title">Boa noite, Luiza.</h1>
+                <p class="goodnight-subtitle">Espero que teu Dia dos Namorados tenha sido perfeito.</p>
                 <button class="btn btn-primary" onclick="location.reload()" style="z-index: 10; max-width: 250px; margin-top: 2rem;">
                     <i class="fa-solid fa-rotate-right"></i> Recomeçar o dia
                 </button>
@@ -253,7 +213,7 @@
         <div id="log-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="modal-title">Diário da Ju</div>
+                    <div class="modal-title">Diário da Luiza</div>
                     <button class="modal-close" onclick="closeModal('log-modal')">&times;</button>
                 </div>
                 <div class="modal-body" id="log-modal-body">
@@ -270,10 +230,10 @@
                     <button class="modal-close" onclick="closeModal('about-modal')">&times;</button>
                 </div>
                 <div class="modal-body" style="line-height: 1.6;">
-                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Feito ❤️ com  para a Ju</h3>
-                    <p>Este jogo é um presente que fiz para você, para que nunca se esqueça dos bons e as vezes nem tão bons momentos que tivemos no Senac. <br><br>Tu foi minha aluna favorita, apesar da mais problemática, aprendemos muito juntos um com o outro, e sou muito grato por isso. Aguentamos tudo junto, e vou sentir muita falta da sua presença.</p>
-                    <p style="margin-top: 1rem;"> A rotina pode parecer chata e repetitiva agora, mas tenho certeza que você vai sentir falta quando estiver longe. Mas que isso não te abale, pois espero que tu tenha uma jornada incrível.</p>
-                    <p style="margin-top: 1rem; color: var(--secondary); font-weight: bold;">Boa viagem, Ju.</p>
+                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Feito ❤️ com amor para a Luiza</h3>
+                    <p>Este jogo é um presente especial de Dia dos Namorados para você, minha namorada maravilhosa. <br><br>Quero que você saiba que cada dia ao seu lado é um presente, e criei este jogo para mostrar o quanto você é especial para mim. Você é a protagonista da minha história, e sempre será.</p>
+                    <p style="margin-top: 1rem;">Espero que este Dia dos Namorados seja tão perfeito quanto você é para mim. Te amo mais do que palavras podem expressar.</p>
+                    <p style="margin-top: 1rem; color: var(--secondary); font-weight: bold;">Feliz Dia dos Namorados, meu amor. ❤️</p>
                 </div>
             </div>
         </div>

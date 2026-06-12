@@ -13,28 +13,18 @@ const ASSETS = {
         kalzone: "assets/bg_kalzone.jpg"
     },
     sprites: {
-        julia_pijama: "assets/julia_pijama.png",
-        julia_moletom: "assets/julia_moletom.png",
-        julia_leve: "assets/julia_leve.png",
-        julia_capa: "assets/julia_capa.png",
-        julia_uniforme: "assets/julia_uniforme.png",
-        enrique_zen: "assets/enrique_zen.png",
-        otavio_crente: "assets/otavio_crente.png",
-        ruan_namorado: "assets/ruan_namorado.png"
+        luiza: "assets/luiza.png",
+        enrique_zen: "assets/enrique_zen.png"
     }
 };
 
 // Estado do Jogo
 let coracoes = {
-    enrique: 0,
-    otavio: 0,
-    ruan: 5
+    enrique: 5
 };
 let currentNodeKey = null;
-let energiaJulia = 80;
-let dorJulia = 20;
-let climaDoDia = "frio"; // 'frio', 'chuva' ou 'calor'
-let roupaEscolhida = ""; // 'moletom', 'leve', 'capa'
+let energiaLuiza = 80;
+let roupaEscolhida = "";
 
 let dialogHistory = [];
 let storyQueue = [];
@@ -48,719 +38,356 @@ let chatStep = 0;
 
 // Roteiro Dinâmico do Jogo
 const StoryNodes = {
-    // ================= DESPERTAR E CLIMA =================
+    // ================= DESPERTAR =================
     inicio: {
         bg: "casa_julia",
-        time: "05:30",
+        time: "08:00",
         dialogs: [
             { 
                 speaker: "Narrador", 
-                text: "O despertador toca um som estridente de corneta às 5:30 da manhã. Julia abre um olho.",
-                conditional: [
-                    { 
-                        cond: () => energiaJulia >= 90 && dorJulia <= 15, 
-                        text: "O despertador toca às 5:30 da manhã. Julia, surpreendentemente, acorda bem disposta hoje. Sem aquela dor chata nas costas e com o humor melhor do que a média. Um milagre!" 
-                    },
-                    { 
-                        cond: () => energiaJulia < 75 || dorJulia > 35, 
-                        text: "O despertador toca às 5:30 da manhã. Julia solta um gemido baixo. As costas estão doloridas e levantar da cama parece um esforço hercúleo." 
-                    }
-                ]
+                text: "O despertador toca às 8 da manhã. Luiza abre os olhos. Hoje é Dia dos Namorados."
             },
             { 
-                speaker: "Julia", 
-                text: "Mais um dia... Por que eu não nasci herdeira?",
-                conditional: [
-                    {
-                        cond: () => energiaJulia >= 90 && dorJulia <= 15,
-                        text: "Nossa, até que não estou me sentindo um bagaço hoje! Dá pra encarar a Quero-Quero sorrindo."
-                    },
-                    {
-                        cond: () => dorJulia > 40,
-                        text: "Minhas costelas parecem que foram usadas de tambor ontem à noite... Socorro."
-                    }
-                ]
+                speaker: "Luiza", 
+                text: "Dia dos Namorados... O Enrique deve ter preparado algo."
             },
-            { speaker: "Narrador", text: "Ela olha pela janela para checar o clima lá fora antes de arrumar a mala e escolher a roupa." }
+            { speaker: "Narrador", text: "Ela se levanta da cama e vai até a janela." }
         ],
         next: "checar_clima"
     },
 
     checar_clima: {
         bg: "casa_julia",
-        time: "05:35",
-        dialogs: [],
-        next: "escolha_roupa"
-    },
-
-    escolha_roupa: {
-        bg: "casa_julia",
-        time: "05:40",
+        time: "08:05",
         dialogs: [
-            { speaker: "Julia", text: "Preciso decidir o que vestir. Tenho que passar a manhã inteira na Quero-Quero e depois ir direto pro Senac." }
+            { speaker: "Luiza", text: "Vou me arrumar pro encontro com o Enrique." }
         ],
-        choices: [
-            { text: "Vestir o moletom gigante e quentinho.", target: "roupa_moletom" },
-            { text: "Colocar uma roupa leve.", target: "roupa_leve" },
-            { text: "Usar a capa de chuva amarela e galochas.", target: "roupa_capa" }
-        ]
+        next: "enrique_chega"
     },
 
-    roupa_moletom: {
+    // ================= ENRIQUE CHEGA =================
+    enrique_chega: {
         bg: "casa_julia",
-        time: "05:45",
-        dialogs: [], // Dinâmico no JS baseado no clima
-        next: "ir_trabalho"
-    },
-    roupa_leve: {
-        bg: "casa_julia",
-        time: "05:45",
-        dialogs: [], // Dinâmico no JS baseado no clima
-        next: "ir_trabalho"
-    },
-    roupa_capa: {
-        bg: "casa_julia",
-        time: "05:45",
-        dialogs: [], // Dinâmico no JS baseado no clima
-        next: "ir_trabalho"
-    },
-
-    // ================= TRABALHO NA QUERO-QUERO =================
-    ir_trabalho: {
-        bg: "quero_quero",
-        time: "06:00",
-        dialogs: [
-            { 
-                speaker: "Narrador", 
-                text: "Julia chega com o dia amanhecendo na filial das Lojas Quero-Quero bem às 6h da manhã.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia < 65,
-                        text: "Julia se arrasta para o trabalho às 6h da manhã. A caminhada ou vento do dia só a fazem querer uma cama dobrável no setor de móveis."
-                    },
-                    {
-                        cond: () => dorJulia > 40,
-                        text: "Julia chega no trabalho com a mão na lombar. Ficar de pé no caixa hoje vai ser um verdadeiro teste de paciência."
-                    }
-                ]
-            },
-            { 
-                speaker: "Julia", 
-                text: "Bom dia, pessoal... Que o café nos ajude.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia >= 90 && dorJulia <= 15,
-                        text: "Bom dia! Hoje acordei com tudo, pronta para descarregar um caminhão de cimento se precisar!"
-                    },
-                    {
-                        cond: () => dorJulia > 40,
-                        text: "Bom dia... Se alguém me pedir para carregar caixa hoje, eu choro aqui mesmo."
-                    }
-                ]
-            },
-            { speaker: "Narrador", text: "Logo no início do turno, um cliente confuso entra procurando parafuso sextavado e começa a reclamar do preço do cimento." }
-        ],
-        choices: [
-            { text: "Atender o cliente com paciência zen absoluta.", target: "trabalho_zen" },
-            { text: "Oferecer garantia estendida e consórcio com fervor.", target: "trabalho_crente", reqEnergyMin: 45 },
-            { text: "Organizar o setor de ferramentas com cuidado meticuloso.", target: "trabalho_organizar" }
-        ]
-    },
-
-    trabalho_zen: {
-        bg: "quero_quero",
-        time: "08:30",
-        dialogs: [
-            { speaker: "Julia", text: "Senhor, o preço do cimento oscila conforme o mercado. Vamos focar em achar seus parafusos primeiro." },
-            { speaker: "Narrador", text: "O cliente se acalma com a postura tranquila da Ju. Ela passa o resto da manhã organizando o setor de fixação e repondo prateleiras no ritmo que as costas permitem." },
-            { speaker: "Narrador", text: "Perto das 11h, o movimento cai. Julia confere o horário e começa a guardar as coisas. A gerente nota sua eficiência e dá um elogio discreto." }
-        ],
-        effects: { energia: +20, dor: -10 },
-        next: "fim_trabalho"
-    },
-
-    trabalho_crente: {
-        bg: "quero_quero",
         time: "09:00",
         dialogs: [
-            { speaker: "Julia", text: "Olha, essa ferramenta tem garantia estendida! É a segurança de que você não vai ficar na mão quando mais precisar! Leve também o nosso consórcio!" },
-            { speaker: "Narrador", text: "O cliente fica convencido pelo entusiasmo dela e resolve levar o pacote de serviços completo." },
-            { speaker: "Narrador", text: "Julia bate a meta de vendas da manhã antes das 10h. O esforço pesou nas costas, mas a gerente até parabenizou e prometeu um bônus no próximo mês!" }
+            { 
+                speaker: "Narrador", 
+                text: "Luiza tá pronta quando a campainha toca. É Enrique."
+            },
+            { 
+                speaker: "Enrique", 
+                text: "Feliz Dia dos Namorados! Você tá... tá muito bem, viu?",
+                chars: ["luiza", "enrique"]
+            },
+            { speaker: "Luiza", text: "Enrique! Obrigada! O que você preparou pra hoje?", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, preparei umas coisas. Vamos começar com café da manhã, tá bom?", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -20, dor: +15 },
-        next: "fim_trabalho"
+        effects: { energia: +20, hearts: { enrique: +1 } },
+        next: "cafe_manha"
     },
 
-    trabalho_organizar: {
-        bg: "quero_quero",
+    cafe_manha: {
+        bg: "centro",
         time: "09:30",
         dialogs: [
-            { speaker: "Julia", text: "Vou aproveitar que tá calmo pra organizar esse setor de ferramentas. Tudo fora do lugar." },
-            { speaker: "Narrador", text: "Julia passa a manhã organizando martelos, alicates e chaves com cuidado meticuloso. Cada ferramenta no seu lugar, por ordem de tamanho." },
-            { speaker: "Narrador", text: "O trabalho repetitivo acalma a mente, e as costas agradecem por não ter que carregar peso. O setor ficou perfeito, facilitando o trabalho dos colegas." }
+            { speaker: "Narrador", text: "Enrique leva Luiza pra uma cafeteria no centro." },
+            { speaker: "Enrique", text: "Reservei essa mesa pra gente. Espero que goste.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Isso é ótimo, Enrique! Você não precisava se esforçar tanto, sabe?", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, tranquilo. Eu queria fazer algo legal pra você. É Dia dos Namorados, né?", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles tomam café da manhã conversando." }
         ],
-        effects: { energia: +15, dor: -25 },
-        next: "fim_trabalho"
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        choices: [
+            { text: "Dar um beijo no Enrique. (-10 energia)", target: "beijo_romantico", costEnergy: 10 },
+            { text: "Dizer que ama ele e agradecer. (-5 energia)", target: "declaracao_amor", costEnergy: 5 },
+            { text: "Segurar a mão dele. (-5 energia)", target: "segurar_mao", costEnergy: 5 }
+        ]
     },
 
-    fim_trabalho: {
-        bg: "quero_quero",
+    beijo_romantico: {
+        bg: "centro",
+        time: "10:00",
+        dialogs: [
+            { speaker: "Luiza", text: "*(Puxa Enrique pra um beijo)* Te amo, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(Corresponde ao beijo)* Eu também te amo, princesa. Feliz Dia dos Namorados.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "O beijo dura um tempo, e quando se separam, ambos estão sorrindo." }
+        ],
+        effects: { energia: -10, hearts: { enrique: +2 } },
+        next: "passeio_parque"
+    },
+
+    declaracao_amor: {
+        bg: "centro",
+        time: "10:00",
+        dialogs: [
+            { speaker: "Luiza", text: "Enrique, eu preciso te dizer... eu te amo muito. Você me faz feliz.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Princesa, ouvir isso de você é... é muito bom. Eu também te amo. Você é importante pra mim.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique segura as mãos de Luiza e olha pra ela." }
+        ],
+        effects: { energia: -5, hearts: { enrique: +1 } },
+        next: "passeio_parque"
+    },
+
+    segurar_mao: {
+        bg: "centro",
+        time: "10:00",
+        dialogs: [
+            { speaker: "Luiza", text: "*(Segura a mão de Enrique)* Obrigada por tudo, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(Aperta a mão dela)* Ah, tranquilo. Você merece, amor.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles ficam de mãos dadas, conversando." }
+        ],
+        effects: { energia: -5, hearts: { enrique: +1 } },
+        next: "passeio_parque"
+    },
+
+    passeio_parque: {
+        bg: "praca",
         time: "11:00",
         dialogs: [
-            {
-                speaker: "Narrador",
-                text: "Turno da manhã encerrado. Julia bate o ponto, pega a mochila e sai pela porta da frente com a cabeça já no almoço.",
-                conditional: [
-                    {
-                        cond: () => dorJulia > 50,
-                        text: "Turno encerrado. Julia bate o ponto com a lombar reclamando de cada passo até o ponto de ônibus."
-                    },
-                    {
-                        cond: () => energiaJulia < 40,
-                        text: "Turno encerrado. Julia sai arrastando os pés. Ainda tem a aula à tarde — precisa comer alguma coisa rápido."
-                    }
-                ]
-            }
+            { speaker: "Narrador", text: "Depois do café, Enrique leva Luiza pra passear no parque." },
+            { speaker: "Enrique", text: "Lembra da primeira vez que a gente veio aqui? Foi faz tempo, né?", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Lembro! Eu tô nervosa, e você foi super gentil. Desde então eu sei que você é especial.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, parou. Desde então minha vida mudou. Você é... é importante pra mim.", chars: ["luiza", "enrique"] }
         ],
+        effects: { energia: +20, hearts: { enrique: +1 } },
         choices: [
-            { text: "Comer um kalzone no centro.", target: "almoco_kalzone" },
-            { text: "Não comer nada para economizar.", target: "almoco_economizar" },
-            { text: "Ir pra praça pintar bob goodies.", target: "almoco_praca" }
+            { text: "Sentar no banco e conversar sobre o futuro.", target: "conversa_futuro" },
+            { text: "Dar uma volta de braço dado.", target: "volta_braco" },
+            { text: "Tirar fotos juntos.", target: "fotos_romanticas" }
         ]
     },
 
-    almoco: {
-        bg: "centro",
-        time: "12:00",
-        dialogs: [
-            {
-                speaker: "Narrador",
-                text: "Com o turno encerrado, Julia tem uma hora e meia antes da aula. Ela decide comer alguma coisa no centro.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia < 40,
-                        text: "Com o turno encerrado, Julia arrasta os pés pelo calçadão. Precisa comer algo antes de desabar na cadeira do Senac."
-                    }
-                ]
-            },
-            { speaker: "Julia", text: "Um caldo de cana e um pastel de queijo. Esse é o plano." },
-            { speaker: "Narrador", text: "Ela senta numa mesa de plástico na beira da calçada, descansa os pés e recarrega as energias antes de pegar o ônibus pro Senac." }
-        ],
-        effects: { energia: +15, dor: -10 },
-        next: "senac_inicio"
-    },
-
-    almoco_kalzone: {
-        bg: "kalzone",
-        time: "12:00",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia vai até a pizzaria do centro. O kalzone tá delicioso e quentinho." },
-            { speaker: "Narrador", text: "De repente, ela ouve uma voz familiar atrás dela." },
-            { speaker: "Ruan", text: "Princesa! Que coincidência te ver aqui! Tava passando e resolvi dar uma olhada.", char: "ruan" },
-            { speaker: "Julia", text: "Ruan! Que surpresa linda! Tava só comendo um kalzone antes da aula." },
-            { speaker: "Ruan", text: "Deixa eu te pagar, amor. Você merece depois de trabalhar tanto.", char: "ruan" },
-            { speaker: "Narrador", text: "Ruan paga o kalzone e dá um beijo na testa da Ju. Ela vai pro Senac com o coração quentinho." }
-        ],
-        effects: { energia: +25, dor: -15, hearts: { ruan: +1 } },
-        next: "senac_inicio"
-    },
-
-    almoco_economizar: {
-        bg: "centro",
-        time: "12:00",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia decide não gastar dinheiro com almoço. O bolso tá apertado esse mês." },
-            { speaker: "Julia", text: "Vou aguentar até chegar em casa. Já tomei café da manhã, dá pra passar." },
-            { speaker: "Narrador", text: "Ela caminha até o ponto de ônibus com o estômago roncando e tonturas de fome. A cabeça começa a doer de tanto tempo sem comer." }
-        ],
-        effects: { energia: -20, dor: +10 },
-        next: "senac_inicio"
-    },
-
-    almoco_praca: {
+    conversa_futuro: {
         bg: "praca",
-        time: "12:00",
+        time: "11:30",
         dialogs: [
-            { speaker: "Narrador", text: "Julia decide ir pra praça. Ela leva o kit de pintura e começa a fazer bob goodies." },
-            { speaker: "Julia", text: "Nada melhor que pintar pra relaxar depois de um turno chato." },
-            { speaker: "Narrador", text: "De repente, alguém passa de skate pela praça com uma mochila nas costas." },
-            { speaker: "Enrique", text: "Epa. Ju? Pintando um bob goodies?", char: "enrique" },
-            { speaker: "Julia", text: "Enrique! Sabia que era tu pelo barulho de skate." },
-            { speaker: "Enrique", text: "Ah, é... peço perdão pelo incômodo.", char: "enrique" },
-            { speaker: "Narrador", text: "Enrique pega o skate na mão e fica olhando os bob goodies da Ju por um instante antes de continuar." },
-            { speaker: "Enrique", text: "Ficaram bem legais. Gostei das cores, tá de parabéns.", char: "enrique" },
-            { speaker: "Narrador", text: "Julia vai pro Senac sentindo-se inspirada e criativa." }
+            { speaker: "Luiza", text: "Enrique, você já pensou sobre nosso futuro? Sabe, pra onde a gente vai daqui uns anos?", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Penso sim. Eu te vejo comigo, construindo uma vida. Viajando, rindo... enfrentando as coisas juntos.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Isso soa bom. Eu não imagino meu futuro sem você.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "E sem você meu futuro não faz sentido. Você é minha pessoa, amor. Sério.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +15, dor: -10, hearts: { enrique: +1 } },
-        next: "senac_inicio"
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "almoco_romantico"
     },
 
-    // ================= SENAC =================
-    senac_inicio: {
-        bg: "senac_aula",
-        time: "13:30",
+    volta_braco: {
+        bg: "praca",
+        time: "11:30",
         dialogs: [
-            { 
-                speaker: "Narrador", 
-                text: "Julia chega na sala do Senac correndo e se joga na cadeira da ponta. O ar condicionado congelante bate direto nas suas costas.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia < 45,
-                        text: "Julia senta na cadeira com o olhar cansado. Os rapazes reparam que ela parece bem exausta hoje."
-                    },
-                    {
-                        cond: () => dorJulia > 55,
-                        text: "Julia senta soltando um suspiro de dor nas costas. Otávio e Enrique comentam que ela precisa de um descanso urgente."
-                    },
-                    {
-                        cond: () => energiaJulia >= 80 && dorJulia <= 25,
-                        text: "Julia senta com uma boa postura e parece disposta. Os rapazes comentam que hoje ela parece descansada."
-                    }
-                ]
-            },
-            { 
-                speaker: "Julia", 
-                text: "Oi, gente... Quase não cheguei a tempo hoje.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia >= 90 && dorJulia <= 15,
-                        text: "Oi, gente! Nossa, hoje o dia na trabalho rendeu, mas ainda estou inteira e com foco total para programar!"
-                    },
-                    {
-                        cond: () => energiaJulia < 45,
-                        text: "Oi, gente... Se eu deitar a cabeça no teclado aqui, me acordem se o professor olhar."
-                    },
-                    {
-                        cond: () => dorJulia > 45,
-                        text: "Oi, pessoal... Ficar em pé naquela loja acabou com a minha coluna hoje. Não consigo nem sentar direito."
-                    }
-                ]
-            }
+            { speaker: "Narrador", text: "Enrique oferece o braço pra Luiza, e ela aceita. Eles caminham pelo parque." },
+            { speaker: "Enrique", text: "Cada passo com você me faz sortudo, sabe?", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "E eu me sinto amada. Obrigada por me fazer feliz, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "O sol brilha sobre eles enquanto caminham." }
         ],
-        next: "senac_opcoes_genericas"
+        effects: { energia: +20, hearts: { enrique: +1 } },
+        next: "almoco_romantico"
     },
 
-    senac_casaco: {
-        bg: "senac_aula",
-        time: "13:40",
-        dialogs: [], // Dinâmico para falar sobre a roupa dela e oferta do casaco
-        choices: [
-            { text: "Aceitar o casaco do Enrique e agradecer baixinho.", target: "ato1_casaco_enrique" },
-            { text: "Recusar o casaco e tentar aguentar firme.", target: "ato1_recusar_casaco" }
-        ]
-    },
-
-    senac_opcoes_genericas: {
-        bg: "senac_aula",
-        time: "13:45",
-        dialogs: [],
-        choices: [
-            { text: "Pedir ajuda com JavaScript pra Enrique e Otávio.", target: "ato1_dormir" },
-            { text: "Reclamar de dor nas costas e cansaço.", target: "ato1_dor" },
-            { text: "Puxar assunto com Enrique e Otávio.", target: "ato1_conversar", reqEnergyMin: 40 }
-        ]
-    },
-
-    ato1_casaco_enrique: {
-        bg: "senac_aula",
-        time: "13:45",
+    fotos_romanticas: {
+        bg: "praca",
+        time: "11:30",
         dialogs: [
-            { speaker: "Julia", text: "Tá... eu aceito. Minha dignidade já ficou na rua junto com a água da chuva.", chars: ["julia", "enrique"] },
-            { speaker: "Enrique", text: "Casaco entregue. Temperatura corporal preservada. Risco de virar picolé reduzido em 73%.", chars: ["julia", "enrique"] },
-            { speaker: "Julia", text: "Obrigada. E por favor ignora o barulho do meu jeans tentando virar papelão.", chars: ["julia", "enrique"] },
-            { speaker: "Narrador", text: "Julia veste o casaco seco por cima da roupa úmida. Enrique finge olhar pro monitor, mas fica claramente satisfeito por ter ajudado.", chars: ["julia", "enrique"] }
+            { speaker: "Luiza", text: "Vamos tirar uma foto! Quero guardar esse momento.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Claro! *(Tira o celular e fica ao lado de Luiza)* Sorriso!", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles tiram várias fotos, abraçados, sorrindo." },
+            { speaker: "Enrique", text: "Essas fotos vão ficar na minha tela. Você tá linda, princesa.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +10, dor: -10, hearts: { enrique: +1 } },
-        next: "senac_opcoes_genericas"
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "almoco_romantico"
     },
 
-    ato1_recusar_casaco: {
-        bg: "senac_aula",
-        time: "13:45",
+    // ================= ALMOÇO =================
+    almoco_romantico: {
+        bg: "kalzone",
+        time: "12:30",
         dialogs: [
-            { speaker: "Julia", text: "Obrigada, mas vou tentar aguentar. Se eu pegar teu casaco, você vira estátua de gelo.", chars: ["julia", "enrique"] },
-            { speaker: "Enrique", text: "Decisão altruísta registrada. Discordo, mas respeito.", chars: ["julia", "enrique"] },
-            { speaker: "Narrador", text: "Julia passa os primeiros minutos da aula abraçada na própria mochila, esperando o ar condicionado desistir dela." }
+            { speaker: "Narrador", text: "Pra almoçar, Enrique leva Luiza num restaurante com vista pra cidade." },
+            { speaker: "Enrique", text: "Escolhi esse lugar porque a comida é boa, e a vista daqui dá pra ver a cidade inteira.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Isso é legal, Enrique! Você pensou em tudo.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, eu queria que hoje fosse especial. Porque você é especial pra mim.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles almoçam conversando." }
         ],
-        effects: { energia: -5, dor: +5 },
-        next: "senac_opcoes_genericas"
+        effects: { energia: +30, hearts: { enrique: +1 } },
+        next: "atividade_tarde"
     },
 
-    ato1_dormir: {
-        bg: "senac_aula",
-        time: "13:50",
-        dialogs: [
-            { speaker: "Julia", text: "Meninos, socorro! Não tô entendendo esse loop de JavaScript da aula de hoje." },
-            { speaker: "Enrique", text: "Julia, isso é básico. É bem fácil... *(Percebe o olhar raivoso da Julia)* Tá... nem tão fácil assim.", chars: ["julia", "enrique"] },
-            { speaker: "Julia", text: "Mas eu coloquei o `i < 10`..." },
-            { speaker: "Enrique", text: "E qual o valor inicial do `i`? Zero? Um? Você tá achando que o JavaScript adivinha? *(faz cara de julgamento)*", chars: ["julia", "enrique"] },
-            { speaker: "Julia", text: "*(Cara de quem tá errada)* Ah... eu esqueci de declarar..." },
-            { speaker: "Enrique", text: "Exatamente. Agora tenta de novo. *(pausa dramática)*... Brincadeira, você tá certa. Só faltava o `let i = 0`.", chars: ["julia", "enrique"] },
-            { speaker: "Julia", text: "ENRIQUE! Você me fez pensar que eu era burra!", chars: ["julia", "enrique"] },
-            { speaker: "Enrique", text: "É que sua cara de confusão é muito engraçada. Mas você tá certa, parabéns.", chars: ["julia", "enrique"] },
-            { speaker: "Otávio", text: "Ju, segura minha mão, eu te projejo dele!", chars: ["julia", "enrique", "otavio"] }
-        ],
-        effects: { energia: +10, dor: -10, hearts: { enrique: +1, otavio: +1 } },
-        next: "ato2_inicio"
-    },
-
-    ato1_dor: {
-        bg: "senac_aula",
+    atividade_tarde: {
+        bg: "centro",
         time: "14:00",
         dialogs: [
-            { speaker: "Julia", text: "Ai... minhas costelas. Acho que o Senac compra cadeiras projetadas por torturadores." },
-            { speaker: "Otávio", text: "Calma! Não temas! Vou fazer uma oração pelas suas vértebras agora mesmo!", chars: ["julia", "otavio"] },
-            { speaker: "Otávio", text: "*(Coloca a mão perto do ombro da Ju)* Senhor, alivia essa dor nas costas da nossa irmã Julia e dá força pra ela aguentar a aula!", chars: ["julia", "otavio"] },
-            { speaker: "Enrique", text: "Amém. Mas se a oração falhar, eu tenho um remédio no bolso. Só não sei se ta na válidade. Quer?", chars: ["julia", "enrique"] },
-            { speaker: "Julia", text: "Gente, eu só queria uma almofada..." }
-        ],
-        effects: { energia: -10, dor: -30, hearts: { otavio: +1 } },
-        next: "ato2_inicio"
-    },
-
-    ato1_conversar: {
-        bg: "senac_aula",
-        time: "14:10",
-        dialogs: [
-            { speaker: "Julia", text: "Meninos, tá frio pra caraca hoje. Tá comendo meus seios de frio." },
-            { speaker: "Enrique", text: "Espera... minha namorada nunca reclamou disso. Será que é só você?", chars: ["julia", "enrique"] },
-            { speaker: "Otávio", text: "Não não, minha mãe sempre reclamava disso. É coisa de mulher mesmo.", chars: ["enrique", "otavio"] },
-            { speaker: "Enrique", text: "Nunca reparei nos seios da minha mãe... *(silêncio constrangedor)*... Eu quis dizer, nunca reparei que ela reclamava disso.", chars: ["enrique", "otavio"] },
-            { speaker: "Julia", text: "*(Olhar de tacho)* Enrique... vou fingir que não ouvi isso." }
-        ],
-        effects: { energia: -5, dor: 0, hearts: { enrique: +1, otavio: +1 } },
-        next: "ato2_inicio"
-    },
-
-    // ================= ATO 2 =================
-    ato2_inicio: {
-        bg: "cantina",
-        time: "15:30",
-        dialogs: [
-            { 
-                speaker: "Narrador", 
-                text: "O sinal toca: hora do intervalo! O trio desce para a cantina do Senac.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia < 35,
-                        text: "O sinal do intervalo toca. Julia arrasta os pés como se estivesse andando sob gravidade dupla. A cantina parece a linha de chegada de uma maratona."
-                    },
-                    {
-                        cond: () => dorJulia > 50,
-                        text: "Julia desce os degraus da escada segurando firme no corrimão e soltando reclamações audíveis a cada pisada."
-                    }
-                ]
-            },
-            { speaker: "Narrador", text: "Otávio, para não gastar os 8 reais cobrados por um pão de queijo murcho, puxa sua garrafa térmica de inox com café passado em casa." },
-            { speaker: "Otávio", text: "Glória! Café fresquinho! Quem quer poupar o bolso e alimentar a alma?", char: "otavio" }
+            { speaker: "Narrador", text: "Depois do almoço, Enrique tem uma surpresa pra tarde." },
+            { speaker: "Enrique", text: "Pra tarde, preparei umas coisas. O que você quer fazer?", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Aceitar o café caseiro do Otávio.", target: "ato2_cafe" },
-            { text: "Forçar Enrique a aceitar um pedaço do seu salgado.", target: "ato2_salgado" },
-            { text: "Dar uma volta no calçadão pra comer um Kalzone.", target: "ato2_centro", reqPainMax: 40 }
+            { text: "Ir ao cinema ver um filme.", target: "cinema" },
+            { text: "Fazer pintura juntos.", target: "pintura" },
+            { text: "Ir num museu.", target: "museu" }
         ]
     },
 
-    ato2_cafe: {
-        bg: "cantina",
-        time: "15:40",
-        dialogs: [
-            { speaker: "Julia", text: "Me serve um copo, Otávio. Meu estoque de cafeína zerou." },
-            { speaker: "Otávio", text: "*(Serve o café com um sorriso radiante)* Aqui tá! Café fresquinho!", char: "otavio" },
-            { speaker: "Enrique", text: "Esse café tá forte demais. Mas eu tá de boa, da pra aguentar.", char: "enrique" },
-            { speaker: "Julia", text: "Eu queria ser assim. Tô sempre ansiosa por tudo, até por coisas que nem aconteceram ainda." },
-            { speaker: "Otávio", text: "Eu também fico meio ansioso às vezes, mas a fé me acalma. Basta orar e respirar.", char: "otavio" },
-            { speaker: "Enrique", text: "Às vezes ser de boa demais é ruim.", char: "enrique" },
-            { speaker: "Julia", text: "Pelo menos você não sofre antecipadamente como eu. Minha ansiedade tá sempre no futuro." },
-            { speaker: "Narrador", text: "O café tá forte o suficiente pra derreter chumbo, mas a conversa sobre ansiedade deixa a Ju mais leve." },
-        ],
-        effects: { energia: +35, dor: -5, hearts: { otavio: +1 } },
-        next: "ato3_inicio"
-    },
-
-    ato2_salgado: {
-        bg: "cantina",
-        time: "15:45",
-        dialogs: [
-            { speaker: "Julia", text: "Enrique, deve ta cansado por ter vindo de skate, quer um pedaço?" },
-            { speaker: "Enrique", text: "Não, obrigado Ju. Eu já comi antes de vir.", char: "enrique" },
-            { speaker: "Julia", text: "*(Olhar sério)* Enrique... PEGA O SALGADO." },
-            { speaker: "Enrique", text: "*(Pega a esfiha imediatamente)* Tá bom, tá bom. Até que tô com um pouco de fome.", char: "enrique" },
-            { speaker: "Otávio", text: "Misericórdia! Hahaha", char: "otavio" },
-            { speaker: "Enrique", text: "A cara de raiva da Ju é meio assustadora. Fica difícil de recusar.", char: "enrique" }
-        ],
-        effects: { energia: +10, dor: 0, hearts: { enrique: +1 } },
-        next: "ato3_inicio"
-    },
-
-    ato2_centro: {
-        bg: "kalzone",
-        time: "15:50",
-        dialogs: [
-            { speaker: "Narrador", text: "Eles decidem dar uma volta no calçadão pra comer um Kalzone." },
-            { speaker: "Julia", text: "Se eu não comer algo salgado agora, eu vou ter um treco." },
-            { speaker: "Enrique", text: "É uma caminhada longa, mas o Kalzone vale a pena.", char: "enrique" },
-            { speaker: "Otávio", text: "Glória! Vamos abençoar essa comida sagrada!", char: "otavio" },
-            { speaker: "Enrique", text: "Eu passo. To morrendo de fome, quero comer logo.", char: "enrique" },
-            { speaker: "Otávio", text: "Misericórdia! Vocês são uns pagões...", char: "otavio" },
-            { speaker: "Narrador", text: "Eles comem o Kalzone correndo pra dar tempo de voltar antes do fim do intervalo. Julia se sente revigorada e a amizade do trio se fortalece." }
-        ],
-        effects: { energia: +25, dor: -15, hearts: { enrique: +1, otavio: +1 } },
-        next: "ato3_inicio"
-    },
-
-    // ================= ATO 3 =================
-    ato3_inicio: {
-        bg: "senac_aula",
-        time: "17:30",
-        dialogs: [
-            { speaker: "Narrador", text: "Fim da aula! A turma se dispersa e o cansaço do dia bate com força total." },
-            { 
-                speaker: "Narrador", 
-                text: "O grupo sai pelo portão principal do Senac. Agora é a hora de decidir o rumo da noite da Julia.",
-                conditional: [
-                    {
-                        cond: () => dorJulia > 65,
-                        text: "Julia caminha de forma visivelmente torta, com as mãos nas costas, jurando que o Senac achatou suas vértebras."
-                    },
-                    {
-                        cond: () => energiaJulia < 35,
-                        text: "Julia mal consegue manter os olhos abertos e fala em frases de duas palavras de tão cansada."
-                    }
-                ]
-            }
-        ],
-        choices: [
-            { text: "Ir pra parada de ônibus com o Enrique.", target: "ato3_parada" },
-            { text: "Encontro Romântico com o Ruan.", target: "ato3_ruan", reqEnergyMin: 50 },
-            { text: "Chamar a galera pro Oponente!", target: "ato3_bar", reqHearts: { enrique: 2, otavio: 2 }, reqEnergyMin: 45, reqPainMax: 50 }
-        ]
-    },
-
-    ato3_parada: {
-        bg: "parada",
-        time: "17:45",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia caminha até a parada de ônibus sob o céu do fim de tarde. Enrique vai ao lado dela em silêncio confortável." },
-            { speaker: "Julia", text: "Obrigada por me acompanhar, Enrique." },
-            { speaker: "Enrique", text: "Tá tranquilo.", char: "enrique" },
-            { speaker: "Narrador", text: "O ônibus chega. Enrique acena levemente com a cabeça e Julia entra no ônibus." }
-        ],
-        effects: { energia: -10, dor: +10 },
-        next: "ato4_inicio"
-    },
-
-    ato3_ruan: {
+    cinema: {
         bg: "centro",
-        time: "18:15",
+        time: "14:30",
         dialogs: [
-            { speaker: "Narrador", text: "Julia decide ir direto ao centro. De repente, encostado num poste com visual descolado, tá Ruan, o namorado." },
-            { speaker: "Ruan", text: "Oi, minha princesa! Sabia que você ia sair cansada hoje, então vim te buscar.", char: "ruan" },
-            { speaker: "Narrador", text: "Ele tira de trás das costas uma Skol Beats vermelha trincando de gelada e um pacotinho de fini de banana." },
-            { speaker: "Julia", text: "Meu Deus, Ruan! Você é um anjo na minha vida!" },
-            { speaker: "Ruan", text: "Faria tudo por você, meu amor. Deixa eu levar sua mochila pesada, vem cá.", char: "ruan" },
-            { speaker: "Narrador", text: "Julia ganha um cafuné maravilhoso e vai caminhando abraçada com o namorado perfeito." }
+            { speaker: "Narrador", text: "Enrique leva Luiza pro cinema. Eles escolhem um filme que os dois queriam ver." },
+            { speaker: "Enrique", text: "Comprei pipoca grande pra gente dividir. E chocolate também, porque sei que você gosta.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Você é o melhor! Isso é exatamente o que eu queria.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Durante o filme, Enrique segura a mão de Luiza. Eles riem das partes engraçadas e se abraçam nas emotivas." }
         ],
-        effects: { energia: +40, dor: -30 },
-        next: "ato4_inicio"
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "jantar_romantico"
     },
 
-    ato3_bar: {
+    pintura: {
+        bg: "praca",
+        time: "14:30",
+        dialogs: [
+            { speaker: "Narrador", text: "Enrique leva Luiza pra um workshop de pintura. O local tá cheio de telas e tintas." },
+            { speaker: "Enrique", text: "Lembrei que você gosta de arte. Pensei que seria legal pintarmos algo juntos.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Isso é criativo! Mal posso esperar pra ver o que a gente vai criar.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles passam a tarde pintando, rindo dos erros um do outro e se ajudando. No final, têm uma pintura feita pelos dois." },
+            { speaker: "Enrique", text: "Essa pintura vai ficar na nossa sala. Pra gente lembrar desse Dia dos Namorados.", chars: ["luiza", "enrique"] }
+        ],
+        effects: { energia: +30, hearts: { enrique: +1 } },
+        next: "jantar_romantico"
+    },
+
+    museu: {
+        bg: "centro",
+        time: "14:30",
+        dialogs: [
+            { speaker: "Narrador", text: "Enrique leva Luiza pra um museu de arte. O lugar é silencioso e cria uma atmosfera especial." },
+            { speaker: "Enrique", text: "Sei que você gosta de arte. Quero compartilhar isso com você.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Isso é maravilhoso. Adoro quando você mostra que conhece meus gostos.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles caminham pelas galerias de mãos dadas, comentando as obras." }
+        ],
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "jantar_romantico"
+    },
+
+    // ================= JANTAR =================
+    jantar_romantico: {
         bg: "oponente_bar",
         time: "19:00",
         dialogs: [
-            { speaker: "Narrador", text: "Eles chegam no Oponente. O lugar tá barulhento, mas o grupo pega uma mesa de sinuca." },
-            { speaker: "Otávio", text: "Vou aplicar as leis da física sagrada nessa bola 8! *(tacada bizarra que encaçapa duas bolas impossíveis)*", char: "otavio" },
-            { speaker: "Enrique", text: "Minha vez... *(tacada que erra completamente e a bola nem se mexe)*... A mesa tá torta.", char: "enrique" },
-            { speaker: "Julia", text: "Deixa eu ver. *(encaçapa 4 bolas seguidas com facilidade)* Tá vendo? É só ângulo.", chars: ["julia", "enrique", "otavio"] },
-            { speaker: "Narrador", text: "Julia domina a mesa enquanto Enrique finge que tá estudando a física da sinuca pra disfarçar que é péssimo." }
+            { speaker: "Narrador", text: "Pra jantar, Enrique reserva uma mesa num restaurante com luz suave." },
+            { speaker: "Enrique", text: "Esse é o final perfeito pro nosso dia. Espero que goste do lugar.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Tô impressionada, Enrique. Você realmente pensou em tudo.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Você merece o mundo, Luiza. Hoje tentei te dar pelo menos uma parte do quanto você significa pra mim.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles jantam conversando sobre o dia, seus sonhos e o quanto se amam." }
         ],
-        effects: { energia: -10, dor: +10, hearts: { enrique: +1, otavio: +1 } },
-        choices: [
-            { text: "Ir pro Tributo depois do bar!", target: "ato3_festa", reqEnergyMin: 50, reqPainMax: 55 },
-            { text: "Já basta por hoje. Ir pra casa depois do bar.", target: "ato4_inicio" }
-        ]
+        effects: { energia: +30, hearts: { enrique: +1 } },
+        next: "surpresa_final"
     },
 
-    ato3_festa: {
-        bg: "tributo_festa",
+    surpresa_final: {
+        bg: "centro",
         time: "21:00",
         dialogs: [
-            { speaker: "Narrador", text: "Depois do bar, os três caminham até o Tributo. O som já bate lá de longe." },
-            { speaker: "Otávio", text: "Glória! Que abençoada essa noite!", char: "otavio" },
-            { speaker: "Enrique", text: "O volume tá 40% acima do recomendável. Mesmo assim... agradável.", char: "enrique" },
-            { speaker: "Narrador", text: "Julia dança, ri e esquece por algumas horas que deve trabalhar cedo no dia seguinte." }
+            { speaker: "Narrador", text: "Depois do jantar, Enrique tem mais uma surpresa." },
+            { speaker: "Enrique", text: "Antes de te levar pra casa, tenho um último presente pra você.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique tira um embrulho do bolso e entrega pra Luiza." },
+            { speaker: "Enrique", text: "Abre, amor.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "*(Abre o presente)* Enrique... é um colar! É lindo!", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Tem uma gravação no centro. Diz 'Eu te amo'. Quero que você sempre lembre do quanto eu te amo.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "*(Com lágrimas nos olhos)* Eu vou usar todos os dias. Te amo tanto, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(Coloca o colar no pescoço dela)* Você fica ainda mais linda com ele. Feliz Dia dos Namorados.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -15, dor: +15, hearts: { enrique: +1, otavio: +1 } },
-        next: "ato4_inicio"
+        effects: { energia: +35, hearts: { enrique: +1 } },
+        next: "casa"
     },
 
-    ato3_role_amarelou: {
-        bg: "oponente_bar",
-        time: "19:00",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia tenta organizar o rolê no Oponente com a galera..." },
-            { speaker: "Narrador", text: "Mas Enrique prefere ficar em casa jogando xadrez contra o computador, e Otávio tem um culto urgente pra ir." },
-            { speaker: "Narrador", text: "Ambos amarelaram porque Julia não juntou corações suficientes com a dupla hoje. Mas nem tudo tá perdido..." },
-            { speaker: "Ruan", text: "Seus amigos são uns bundões, amor! Mas eu tô aqui. Vamos nós dois tomar uma caipirinha e jogar sinuca juntinhos?", char: "ruan" },
-            { speaker: "Julia", text: "Ruan! Você é o melhor namorado do mundo! Vamos sim!", chars: ["julia", "ruan"] },
-            { speaker: "Narrador", text: "Eles chegam no Oponente. O lugar tá barulhento, mas o casal pega uma mesa de sinuca." },
-            { speaker: "Ruan", text: "Vou te ensinar a jogar sinuca, princesa. É fácil, você vai ver!", char: "ruan" },
-            { speaker: "Julia", text: "Tô pronta pra aprender! *(sorri)*", chars: ["julia", "ruan"] },
-            { speaker: "Narrador", text: "Ruan ensina a Ju com paciência, e ela aprende rápido. Eles jogam várias partidas, rindo e se divertindo." },
-            { speaker: "Ruan", text: "Você tá ficando boa nisso, amor! Quer ir pro Tributo depois?", char: "ruan" },
-            { speaker: "Julia", text: "Quero! Vamos dançar!", chars: ["julia", "ruan"] }
-        ],
-        effects: { energia: +10, dor: -10 },
-        next: "ato3_role_amarelou_tributo"
-    },
-
-    ato3_role_amarelou_tributo: {
-        bg: "tributo_festa",
-        time: "21:00",
-        dialogs: [
-            { speaker: "Narrador", text: "Depois do bar, os dois caminham até o Tributo. O som já bate lá de longe." },
-            { speaker: "Ruan", text: "Vamos dançar, minha princesa!", char: "ruan" },
-            { speaker: "Julia", text: "Vamos! *(puxa Ruan pra pista de dança)*", chars: ["julia", "ruan"] },
-            { speaker: "Narrador", text: "Julia dança, ri e esquece por algumas horas que deve trabalhar cedo no dia seguinte. A melhor noite do dia." },
-            { speaker: "Ruan", text: "Você tá linda quando dança, sabia?", char: "ruan" },
-            { speaker: "Julia", text: "Ruan... *(se encosta nele)* Você é perfeito.", chars: ["julia", "ruan"] },
-            { speaker: "Narrador", text: "Julia acaba tendo uma noite super divertida e romântica só com o Ruan!" }
-        ],
-        effects: { energia: -15, dor: +15 },
-        next: "ato4_inicio"
-    },
-
-    // ================= ATO 4 =================
-    ato4_inicio: {
-        bg: "casa_julia",
-        time: "21:30",
-        dialogs: [
-            { 
-                speaker: "Narrador", 
-                text: "Finalmente em casa. Julia se joga na cama.",
-                conditional: [
-                    {
-                        cond: () => energiaJulia < 30,
-                        text: "Finalmente em casa. Julia cai na cama feito uma tábua de madeira. Seu cérebro está prestes a entrar em hibernação forçada automática."
-                    },
-                    {
-                        cond: () => dorJulia > 65,
-                        text: "Finalmente em casa. Julia deita de barriga para cima soltando um gemido prolongado, procurando desesperadamente qualquer pomada ou remédio pras costas."
-                    }
-                ]
-            },
-            { speaker: "Narrador", text: "A grande viagem tá chegando em breve. Ela precisa decidir o que fazer antes de apagar." }
-        ],
-        choices: [
-            { text: "Responder as mensagens de Ruan no WhatsApp.", target: "ato4_ruan_chat" },
-            { text: "Ver as mensagens no grupo do Senac.", target: "ato4_grupo_chat" },
-            { text: "Tomar banho quente, fazer alongamento e ignorar o mundo.", target: "ato4_descanso" }
-        ]
-    },
-
-    ato4_ruan_chat: {
-        bg: "casa_julia",
-        time: "21:40",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia abre o WhatsApp para falar com seu namorado querido." }
-        ],
-        effects: { energia: +15, dor: -20 },
-        isChat: true,
-        chatPartner: "ruan"
-    },
-
-    ato4_grupo_chat: {
-        bg: "casa_julia",
-        time: "21:45",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia abre o grupo do Senac para rir das bobagens dos meninos." }
-        ],
-        effects: { energia: +10, dor: -10, hearts: { enrique: +1, otavio: +1 } },
-        isChat: true,
-        chatPartner: "grupo"
-    },
-
-    ato4_descanso: {
+    casa: {
         bg: "casa_julia",
         time: "22:00",
         dialogs: [
-            { speaker: "Julia", text: "Se eu apagar agora, acordo de madrugada sem saber nem em que ano tô. Vou tentar ser adulta por quinze minutos." },
-            { speaker: "Narrador", text: "Julia toma um banho quente, faz dois alongamentos tortos e encosta uma bolsa morna nas costas." },
-            { speaker: "Narrador", text: "O corpo não fica novo, mas para de reclamar em caixa alta. Pela primeira vez no dia, o quarto parece silencioso." }
+            { speaker: "Narrador", text: "Enrique leva Luiza pra casa. O dia foi perfeito." },
+            { speaker: "Enrique", text: "Chegamos. Obrigado por ter me acompanhado hoje. Foi o melhor Dia dos Namorados da minha vida.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Pra mim também, Enrique. Cada momento foi especial. Você me fez sentir amada.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Você é a pessoa mais amada do mundo, princesa. E eu prometo que vou continuar te fazendo feliz.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles se abraçam na porta de casa, não querendo que o dia acabe." }
         ],
-        effects: { energia: +25, dor: -35 },
-        next: "fim_dia"
+        effects: { energia: +20, hearts: { enrique: +1 } },
+        choices: [
+            { text: "Convidar o Enrique para entrar.", target: "enrique_entra" },
+            { text: "Despedir-se com um beijo de boa noite.", target: "despedida_beijo" },
+            { text: "Pedir para ele ficar mais um pouco.", target: "ficar_mais" }
+        ]
     },
 
-    fim_dia: {
+    enrique_entra: {
+        bg: "casa_julia",
+        time: "22:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Quer entrar? Ainda é cedo, podemos conversar mais um pouco.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Com prazer. Qualquer momento com você é precioso.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique entra e eles se sentam no sofá, abraçados. Conversam sobre o dia e sobre seus sonhos." },
+            { speaker: "Enrique", text: "Princesa, hoje foi o dia mais especial da minha vida. Obrigado por ser minha namorada.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Você fez tudo perfeito, Enrique. Eu te amo.", chars: ["luiza", "enrique"] }
+        ],
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "whatsapp_noite"
+    },
+
+    despedida_beijo: {
+        bg: "casa_julia",
+        time: "22:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Obrigada por tudo hoje, Enrique. Foi perfeito.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Foi um prazer. *(Dá um beijo de boa noite)* Até amanhã.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Luiza entra em casa com o coração cheio. O Dia dos Namorados foi inesquecível." }
+        ],
+        effects: { energia: +20, hearts: { enrique: +1 } },
+        next: "whatsapp_noite"
+    },
+
+    ficar_mais: {
+        bg: "casa_julia",
+        time: "22:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Fica mais um pouco? Não quero que o dia acabe ainda.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Eu também não quero que acabe. Vamos ficar aqui um pouco mais.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles ficam abraçados na porta, aproveitando cada último momento juntos." },
+            { speaker: "Enrique", text: "Cada segundo com você é um presente. Feliz Dia dos Namorados, princesa.", chars: ["luiza", "enrique"] }
+        ],
+        effects: { energia: +25, hearts: { enrique: +1 } },
+        next: "whatsapp_noite"
+    },
+
+    // ================= WHATSAPP DA NOITE =================
+    whatsapp_noite: {
         bg: "casa_julia",
         time: "23:00",
         dialogs: [
-            { speaker: "Narrador", text: "Julia finalmente deita na cama. A luz tá apagada." },
-            { speaker: "Julia", text: "Cabo... o dia foi longo, mas valeu a pena. Amanhã começa a aventura." },
+            { speaker: "Narrador", text: "Luiza tá em casa, sentindo-se a pessoa mais feliz do mundo. Ela decide mandar uma mensagem pro Enrique." }
         ],
-        next: "fim_jogo"
-    },
-
-    go_victory_dormir: {
-        bg: "casa_julia",
-        time: "23:05",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia fecha os olhos e adormece quase instantaneamente. O sono profundo recupera as energias dela." }
-        ],
-        effects: { energia: +20, dor: -15 },
-        next: "fim_jogo"
-    },
-
-    go_victory_mentalizar: {
-        bg: "casa_julia",
-        time: "23:10",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia mentaliza cada detalhe da viagem que tá por vir. A ansiedade positiva diminui a dor física." }
-        ],
-        effects: { energia: +10, dor: -25 },
-        next: "fim_jogo"
-    },
-
-    go_victory_apagar: {
-        bg: "casa_julia",
-        time: "23:00",
-        dialogs: [
-            { speaker: "Narrador", text: "Julia apaga o abajur e se entrega à escuridão. O descanso é imediato e reparador." }
-        ],
-        effects: { energia: +15, dor: -20 },
-        next: "fim_jogo"
+        effects: { energia: +15 },
+        isChat: true,
+        chatPartner: "enrique"
     },
 
     fim_jogo: {
         bg: "casa_julia",
         time: "23:30",
         dialogs: [
-            { speaker: "Narrador", text: "A escuridão abraça Julia gentilmente. O dia foi longo, cheio de decisões, consequências e momentos especiais." },
-            { speaker: "Narrador", text: "Amanhã começa a grande aventura da viagem. Mas por agora..." },
-            { speaker: "Narrador", text: "Boa noite, Ju." }
+            { speaker: "Narrador", text: "A escuridão abraça Luiza gentilmente. O Dia dos Namorados foi perfeito." },
+            { speaker: "Narrador", text: "Luiza adormece com um sorriso no rosto, sabendo que é amada por alguém especial." },
+            { speaker: "Narrador", text: "Boa noite, Luiza." }
         ],
         next: "show_goodnight_screen"
     },
 };
 
-// Diálogos de Chat do WhatsApp (Ato 4)
+// Diálogos de Chat do WhatsApp
 const ChatScripts = {
-    ruan: [
-        { author: "Ruan", text: "Amor? Já chegou em casa?", time: "21:32" },
-        { author: "Ruan", text: "Tô com saudades já... 🥺", time: "21:32" },
-        { author: "Julia", text: "Cheguei sim lindo, acabei de deitar!", time: "21:33" },
-        { author: "Ruan", text: "Que bom meu amor! Queria estar aí pra te fazer uma massagem nas costas e te dar muito cafuné.", time: "21:34" },
-        { author: "Ruan", text: "Sonha comigo tá? Te amo infinitamente! ❤️", time: "21:34", sticker: "love" }
-    ],
-    grupo: [
-        { author: "Otávio", text: "Irmãos, quem fez o exercício 3 de lógica? O meu deu erro na linha 666, repreendi na hora!", time: "21:30" },
-        { author: "Enrique", text: "O meu rodou. O segredo é não forçar a entrada de dados. Se o compilador estiver calmo, tudo entra no fluxo natural.", time: "21:31" },
-        { author: "Otávio", text: "Misericórdia Enrique! Vigia com essas palavras!", time: "21:32", sticker: "sticker_vigia" },
-        { author: "Enrique", text: "Estou falando de fluxo de dados assíncronos. Você que é obcecado por pecados digitais.", time: "21:33" },
-        { author: "Julia", text: "Vocês dois não existem kkkkkk vou sentir falta disso na viagem", time: "21:34" },
-        { author: "Otávio", text: "Vá em paz, irmã Ju! Traremos café da cantina na sua volta (mentira, tá muito caro)", time: "21:35" }
+    enrique: [
+        { author: "Enrique", text: "Chegou bem em casa?", time: "23:05" },
+        { author: "Enrique", text: "Tô aqui pensando em cada momento do nosso dia hoje... Foi perfeito. ❤️", time: "23:05" },
+        { author: "Luiza", text: "Cheguei sim! Foi o melhor Dia dos Namorados da minha vida, Enrique.", time: "23:06" },
+        { author: "Enrique", text: "Pra mim também. Você é a pessoa mais especial do mundo, princesa. Te amo muito!", time: "23:07" },
+        { author: "Enrique", text: "O colar ficou lindo em você. Vai me lembrar do quanto te amo todos os dias. ❤️", time: "23:07", sticker: "love" },
+        { author: "Luiza", text: "Vou usar sempre! Obrigada por tudo, Enrique. Te amo!", time: "23:08" },
+        { author: "Enrique", text: "Dorme bem, princesa. Sonha comigo. Até amanhã! 💕", time: "23:09" }
     ]
 };
 
@@ -777,39 +404,15 @@ window.onload = function() {
 };
 
 function preloadSprites() {
-    document.getElementById('img-julia').src = ASSETS.sprites.julia_pijama;
+    document.getElementById('img-luiza').src = ASSETS.sprites.luiza;
     document.getElementById('img-enrique').src = ASSETS.sprites.enrique_zen;
-    document.getElementById('img-otavio').src = ASSETS.sprites.otavio_crente;
-    document.getElementById('img-ruan').src = ASSETS.sprites.ruan_namorado;
 }
 
-// Função para determinar qual sprite da Julia usar baseado no contexto
-function getJuliaSprite(nodeKey) {
-    // Se está em um nó de trabalho na Quero-Quero, usa uniforme
-    const trabalhoNodes = ['ir_trabalho', 'trabalho_zen', 'trabalho_crente', 'trabalho_organizar', 'fim_trabalho'];
-    if (trabalhoNodes.includes(nodeKey)) {
-        return 'julia_uniforme';
-    }
-
-    // Se não está em trabalho, usa o sprite baseado na roupa escolhida
-    if (roupaEscolhida === 'moletom') {
-        return 'julia_moletom';
-    } else if (roupaEscolhida === 'leve') {
-        return 'julia_leve';
-    } else if (roupaEscolhida === 'capa') {
-        return 'julia_capa';
-    }
-
-    // Se não escolheu roupa ainda, usa pijama
-    return 'julia_pijama';
-}
-
-// Função para atualizar o sprite da Julia dinamicamente
-function updateJuliaSprite(nodeKey) {
-    const spriteKey = getJuliaSprite(nodeKey);
-    const imgJulia = document.getElementById('img-julia');
-    if (imgJulia && ASSETS.sprites[spriteKey]) {
-        imgJulia.src = ASSETS.sprites[spriteKey];
+// Função para atualizar o sprite da Luiza
+function updateLuizaSprite(nodeKey) {
+    const imgLuiza = document.getElementById('img-luiza');
+    if (imgLuiza && ASSETS.sprites.luiza) {
+        imgLuiza.src = ASSETS.sprites.luiza;
     }
 }
 
@@ -844,112 +447,21 @@ function createStars(containerId = 'stars-container') {
 // Iniciar Aventura
 function startGame() {
     coracoes = {
-        enrique: 0,
-        otavio: 0,
-        ruan: 5
+        enrique: 5
     };
     roupaEscolhida = "";
-    lastTime = "05:30";
+    lastTime = "08:00";
 
-    // Gerar Energia aleatória entre 70% e 100%
-    energiaJulia = Math.floor(Math.random() * (100 - 70 + 1)) + 70;
-    // Gerar Dor aleatória entre 0% e 50%
-    dorJulia = Math.floor(Math.random() * (50 - 0 + 1)) + 0;
+    // Gerar Energia aleatória entre 80% e 100%
+    energiaLuiza = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
 
     dialogHistory = [];
-
-    // Gerar Clima Aleatório
-    const climas = ["frio", "chuva", "calor"];
-    climaDoDia = climas[Math.floor(Math.random() * climas.length)];
-
-    // Configurar diálogos iniciais de clima dinamicamente
-    setupClimaDialogs();
 
     updateHUD();
     switchScreen('screen-game');
     loadNode('inicio');
 }
 
-function setupClimaDialogs() {
-    // 1. Configura a tela de checar_clima
-    const checarClima = StoryNodes.checar_clima;
-    if (climaDoDia === "frio") {
-        checarClima.dialogs = [
-            { speaker: "Narrador", text: "O minuano sopra forte lá fora. O termômetro acusa o frio típico de Pelotas logo nas primeiras horas do dia." },
-            { speaker: "Julia", text: "Minhas costelas já doem só de olhar pela janela. Esse vento de Pelotas não perdoa ninguém às 5h da manhã." }
-        ];
-    } else if (climaDoDia === "chuva") {
-        checarClima.dialogs = [
-            { speaker: "Narrador", text: "As nuvens estão pretas e o barulho de água batendo no telhado avisa: é chuva de alagar a rua principal." },
-            { speaker: "Julia", text: "Que ótimo... se eu sair sem proteção vou parecer um pinto molhado quando chegar lá." }
-        ];
-    } else {
-        checarClima.dialogs = [
-            { speaker: "Narrador", text: "O sol nasceu forte e o mormaço avisa que hoje vai ser um calor de derreter o asfalto." },
-            { speaker: "Julia", text: "Calor logo cedo? Minha maquiagem não vai durar nem até o meio-dia na loja." }
-        ];
-    }
-
-    const rMoletom = StoryNodes.roupa_moletom;
-    const rLeve = StoryNodes.roupa_leve;
-    const rCapa = StoryNodes.roupa_capa;
-
-    if (climaDoDia === "frio") {
-        rMoletom.dialogs = [
-            { speaker: "Narrador", text: "Julia veste o moletom felpudo super confortável. Ela se sente quentinha e protegida." },
-            { speaker: "Julia", text: "Quentinha e confortável. A dor nas costas continua, mas pelo menos não morro congelada." }
-        ];
-        rMoletom.effects = { energia: +15, dor: -15 };
-
-        rLeve.dialogs = [
-            { speaker: "Narrador", text: "Julia decide usar a blusa leve. Assim que abre a porta da frente, o vento frio entra batendo direto nos ossos." },
-            { speaker: "Julia", text: "*(Tremendo de frio)* Que ideia ruim... mas a blusa é bonita, pelo menos." }
-        ];
-        rLeve.effects = { energia: -20, dor: +20 };
-
-        rCapa.dialogs = [
-            { speaker: "Narrador", text: "Julia coloca a capa de chuva pesada por cima. Não tá chovendo, apenas frio." },
-            { speaker: "Julia", text: "Ficou um pouco estranho e meio abafado, mas protegeu do vento frio." }
-        ];
-        rCapa.effects = { energia: +5, dor: -5 };
-    } else if (climaDoDia === "chuva") {
-        rMoletom.dialogs = [
-            { speaker: "Narrador", text: "Julia coloca o moletom gigante. Ao sair na chuva, o tecido de algodão começa a absorver a água como uma esponja." },
-            { speaker: "Julia", text: "Tô molhada, pesada e com frio. Devia ter pego uma capa." }
-        ];
-        rMoletom.effects = { energia: -15, dor: +15 };
-
-        rLeve.dialogs = [
-            { speaker: "Narrador", text: "Julia vai de roupa leve. A chuva molha seus braços e o vento gela seu corpo." },
-            { speaker: "Julia", text: "Que arrependimento, o dia mal começou e já tô ensopada..." }
-        ];
-        rLeve.effects = { energia: -25, dor: +25 };
-
-        rCapa.dialogs = [
-            { speaker: "Narrador", text: "Julia veste a capa de chuva amarela e as galochas. A água bate nela e escorre direto." },
-            { speaker: "Julia", text: "Capa de chuva devidamente colocada! Podem vir as poças d'água da rua!" }
-        ];
-        rCapa.effects = { energia: +20, dor: -15 };
-    } else { // calor
-        rMoletom.dialogs = [
-            { speaker: "Narrador", text: "Julia insiste no moletom felpudo. Em menos de cinco minutos de caminhada sob o sol quente, ela começa a cozinhar." },
-            { speaker: "Julia", text: "Parece que estou dentro de uma sauna. Que calor abafado!" }
-        ];
-        rMoletom.effects = { energia: -25, dor: +15 };
-
-        rLeve.dialogs = [
-            { speaker: "Narrador", text: "Julia vai de blusa leve. O ventinho do calor ajuda a refrescar." },
-            { speaker: "Julia", text: "Perfeito! Bem fresca para aguentar o calor das ruas hoje." }
-        ];
-        rLeve.effects = { energia: +20, dor: -15 };
-
-        rCapa.dialogs = [
-            { speaker: "Narrador", text: "Julia coloca a capa de chuva amarela sob um sol de 32 graus." },
-            { speaker: "Julia", text: "Estou suando tanto aqui dentro da capa que criei meu próprio clima tropical úmido." }
-        ];
-        rCapa.effects = { energia: -20, dor: +10 };
-    }
-}
 
 // Mudar de Tela
 function switchScreen(screenId) {
@@ -981,46 +493,30 @@ function closeModal(modalId) {
 
 function getNameColor(name) {
     if (name === 'Enrique') return 'var(--primary)';
-    if (name === 'Otávio') return 'var(--secondary)';
-    if (name === 'Ruan') return '#ffb86c';
-    if (name === 'Julia') return '#ff5555';
+    if (name === 'Luiza') return '#ff5555';
     return 'var(--text-muted)';
 }
 
 // Atualizar Informações na HUD
 function updateHUD() {
-    // Enrique e Otávio têm máximo de 3 corações, Ruan tem 5
-    coracoes.enrique = Math.max(0, Math.min(3, coracoes.enrique));
-    coracoes.otavio = Math.max(0, Math.min(3, coracoes.otavio));
-    coracoes.ruan = Math.max(0, Math.min(5, coracoes.ruan));
+    // Enrique tem máximo de 5 corações
+    coracoes.enrique = Math.max(0, Math.min(5, coracoes.enrique));
 
-    updateHeartMeter('score-enrique', coracoes.enrique, 3);
-    updateHeartMeter('score-otavio', coracoes.otavio, 3);
-    updateHeartMeter('score-ruan', coracoes.ruan, 5);
+    updateHeartMeter('score-enrique', coracoes.enrique, 5);
     
     // Sincroniza também os valores no drawer mobile
-    updateHeartMeter('drawer-score-enrique', coracoes.enrique, 3);
-    updateHeartMeter('drawer-score-otavio', coracoes.otavio, 3);
-    updateHeartMeter('drawer-score-ruan', coracoes.ruan, 5);
+    updateHeartMeter('drawer-score-enrique', coracoes.enrique, 5);
     
-    energiaJulia = Math.max(0, Math.min(100, energiaJulia));
-    dorJulia = Math.max(0, Math.min(100, dorJulia));
+    energiaLuiza = Math.max(0, Math.min(100, energiaLuiza));
 
-    document.getElementById('val-energia').textContent = energiaJulia + '%';
-    document.getElementById('bar-energia').style.width = energiaJulia + '%';
-
-    document.getElementById('val-dor').textContent = dorJulia + '%';
-    document.getElementById('bar-dor').style.width = dorJulia + '%';
+    document.getElementById('val-energia').textContent = energiaLuiza + '%';
+    document.getElementById('bar-energia').style.width = energiaLuiza + '%';
 
     // Sincroniza barras do drawer mobile
     const dValEn = document.getElementById('drawer-val-energia');
     const dBarEn = document.getElementById('drawer-bar-energia');
-    const dValDor = document.getElementById('drawer-val-dor');
-    const dBarDor = document.getElementById('drawer-bar-dor');
-    if (dValEn) dValEn.textContent = energiaJulia + '%';
-    if (dBarEn) dBarEn.style.width = energiaJulia + '%';
-    if (dValDor) dValDor.textContent = dorJulia + '%';
-    if (dBarDor) dBarDor.style.width = dorJulia + '%';
+    if (dValEn) dValEn.textContent = energiaLuiza + '%';
+    if (dBarEn) dBarEn.style.width = energiaLuiza + '%';
 }
 
 function updateHeartMeter(elementId, amount, maxHearts = 5) {
@@ -1082,7 +578,7 @@ function applyEnergyDecay(currentTime) {
         // Decaimento: 1 ponto de energia a cada 30 minutos
         const energyLoss = Math.floor(diffMinutes / 30);
         if (energyLoss > 0) {
-            energiaJulia = Math.max(0, energiaJulia - energyLoss);
+            energiaLuiza = Math.max(0, energiaLuiza - energyLoss);
             updateHUD();
         }
     }
@@ -1112,60 +608,10 @@ function loadNode(nodeKey) {
         roupaEscolhida = nodeKey.replace("roupa_", "");
         setupClimaDialogs();
 
-        const precisaDeCasaco = (climaDoDia === "chuva" && roupaEscolhida !== "capa")
-            || (climaDoDia === "frio" && roupaEscolhida === "leve");
-        StoryNodes.senac_inicio.next = precisaDeCasaco ? "senac_casaco" : "senac_opcoes_genericas";
-
-        // Reseta senac_opcoes_genericas para o diálogo neutro sempre
-        StoryNodes.senac_opcoes_genericas.dialogs = [
-            { speaker: "Narrador", text: "Os guris a analisam de cima a baixo, analisando suas roupas." }
-        ];
-
-        // Popula o nó correto com os comentários de roupa
-        const targetNode = precisaDeCasaco
-            ? StoryNodes.senac_casaco
-            : StoryNodes.senac_opcoes_genericas;
-
-        // Adiciona comentários baseados em clima + roupa
-        if (roupaEscolhida === "moletom") {
-            if (climaDoDia === "calor") {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Ju, você tá de moletom nesse mormaço de 30 graus? Lógica de casaco no sol é suspeita.", char: "enrique" });
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Misericórdia, Julia! Vai desidratar com esse casaco quente nesse sol!", char: "otavio" });
-            } else if (climaDoDia === "chuva") {
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Irmã, esse moletom absorveu tanta chuva que já pode ser considerado batismo por imersão.", char: "otavio" });
-            } else {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Visual altamente protegido. Decisão inteligente para o frio.", char: "enrique" });
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Tá bem quentinha, irmã! Fica confortável!", char: "otavio" });
-            }
-        } else if (roupaEscolhida === "leve") {
-            if (climaDoDia === "frio" || climaDoDia === "chuva") {
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Irmã Julia, você veio com essa roupa leve nessa ventania? Vai acabar pegando um resfriado!", char: "otavio" });
-                targetNode.dialogs.push({ speaker: "Enrique", text: "A análise de probabilidade de resfriar com essa blusa leve é alta. Quer meu casaco?", char: "enrique" });
-            } else {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Roupa fresca e adequada para o calor do dia.", char: "enrique" });
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Ficou bem leve, irmã! Perfeito pra esse calor!", char: "otavio" });
-            }
-        } else if (roupaEscolhida === "capa") {
-            if (climaDoDia === "calor") {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Ju, você tá de capa de chuva amarela nesse sol limpo de calor?", char: "enrique" });
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Parece que vai chover bençãos, mas por enquanto só tem sol forte mesmo!", char: "otavio" });
-            } else if (climaDoDia === "chuva") {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Capa de chuva amarela. À prova d'água e altamente visível. Decisão segura.", char: "enrique" });
-            } else {
-                targetNode.dialogs.push({ speaker: "Enrique", text: "Capa de chuva no frio? Proteção extra contra o vento. Estratégico.", char: "enrique" });
-                targetNode.dialogs.push({ speaker: "Otávio", text: "Tá preparada pra qualquer eventualidade climática!", char: "otavio" });
-            }
-        }
-
-        if (precisaDeCasaco) {
-            targetNode.dialogs.push({ speaker: "Enrique", text: "Você chegou encharcada. Eu tenho um casaco seco na mochila; pega antes que a sala congele você.", char: "enrique" });
-        }
-
         // Aplica efeitos APÓS setupClimaDialogs (que já definiu os effects corretos)
         const roupaNode = StoryNodes[nodeKey];
         if (roupaNode?.effects) {
-            energiaJulia = Math.max(0, Math.min(100, energiaJulia + (roupaNode.effects.energia || 0)));
-            dorJulia = Math.max(0, Math.min(100, dorJulia + (roupaNode.effects.dor || 0)));
+            energiaLuiza = Math.max(0, Math.min(100, energiaLuiza + (roupaNode.effects.energia || 0)));
             updateHUD();
         }
     }
@@ -1189,8 +635,8 @@ function loadNode(nodeKey) {
 
     hideAllSprites();
 
-    // Atualiza o sprite da Julia baseado no contexto
-    updateJuliaSprite(nodeKey);
+    // Atualiza o sprite da Luiza
+    updateLuizaSprite(nodeKey);
 
     storyQueue = [...node.dialogs];
     queueIndex = 0;
@@ -1202,7 +648,7 @@ function loadNode(nodeKey) {
 
 function hideAllSprites() {
     document.querySelectorAll('.character-sprite-container').forEach(sprite => {
-        sprite.classList.remove('active', 'speaking', 'speaking-otavio', 'speaking-ruan', 'dimmed');
+        sprite.classList.remove('active', 'speaking', 'dimmed');
     });
 }
 
@@ -1228,8 +674,7 @@ function playNextDialog(currentNodeObj) {
             startWhatsAppChat(currentNodeObj.chatPartner);
         } else if (currentNodeObj.choices) {
             if (currentNodeObj.effects) {
-                energiaJulia += (currentNodeObj.effects.energia || 0);
-                dorJulia += (currentNodeObj.effects.dor || 0);
+                energiaLuiza += (currentNodeObj.effects.energia || 0);
                 applyHeartEffects(currentNodeObj.effects.hearts);
                 updateHUD();
             }
@@ -1238,8 +683,7 @@ function playNextDialog(currentNodeObj) {
             showGoodnightScreen();
         } else if (currentNodeObj.next) {
             if (currentNodeObj.effects) {
-                energiaJulia += (currentNodeObj.effects.energia || 0);
-                dorJulia += (currentNodeObj.effects.dor || 0);
+                energiaLuiza += (currentNodeObj.effects.energia || 0);
                 applyHeartEffects(currentNodeObj.effects.hearts);
                 updateHUD();
             }
@@ -1253,8 +697,8 @@ function applyHeartEffects(heartEffects) {
 
     Object.entries(heartEffects).forEach(([personagem, amount]) => {
         if (coracoes[personagem] === undefined) return;
-        // Enrique e Otávio têm máximo de 3 corações, Ruan tem 5
-        const maxHearts = (personagem === 'enrique' || personagem === 'otavio') ? 3 : 5;
+        // Enrique tem máximo de 5 corações
+        const maxHearts = 5;
         coracoes[personagem] = Math.max(0, Math.min(maxHearts, coracoes[personagem] + amount));
     });
 }
@@ -1306,10 +750,8 @@ function getCharacterKeyFromSpeaker(speaker) {
     const normalizedSpeaker = getSpeakerClassName(speaker);
 
     const speakerSpriteMap = {
-        julia: 'julia',
-        enrique: 'enrique',
-        otavio: 'otavio',
-        ruan: 'ruan'
+        luiza: 'luiza',
+        enrique: 'enrique'
     };
 
     return speakerSpriteMap[normalizedSpeaker] || null;
@@ -1346,12 +788,6 @@ function manageSpritesState(activeCharKeys, speakingCharKey) {
 
             if (activeCharKey !== speakingCharKey) {
                 activeSprite.classList.add('dimmed');
-            } else if (activeCharKey === 'otavio') {
-                activeSprite.classList.add('speaking-otavio', 'bounce');
-                setTimeout(() => activeSprite.classList.remove('bounce'), 500);
-            } else if (activeCharKey === 'ruan') {
-                activeSprite.classList.add('speaking-ruan', 'bounce');
-                setTimeout(() => activeSprite.classList.remove('bounce'), 500);
             } else {
                 activeSprite.classList.add('speaking');
             }
@@ -1386,9 +822,7 @@ function hasRequiredHearts(requirements) {
 
 function getHeartRequirementText(requirements) {
     const names = {
-        enrique: 'Enrique',
-        otavio: 'Otávio',
-        ruan: 'Ruan'
+        enrique: 'Enrique'
     };
 
     return Object.entries(requirements)
@@ -1417,15 +851,9 @@ function showChoices(choices) {
         }
 
         // Requisito de Energia Mínima
-        if (choice.reqEnergyMin !== undefined && energiaJulia < choice.reqEnergyMin) {
+        if (choice.reqEnergyMin !== undefined && energiaLuiza < choice.reqEnergyMin) {
             isLocked = true;
             lockReason = `Requer Energia >= ${choice.reqEnergyMin}%`;
-        }
-
-        // Requisito de Dores Máximas
-        if (choice.reqPainMax !== undefined && dorJulia > choice.reqPainMax) {
-            isLocked = true;
-            lockReason = `Requer Dores <= ${choice.reqPainMax}%`;
         }
 
         if (isLocked) {
@@ -1435,7 +863,8 @@ function showChoices(choices) {
                     <span>${choice.text}</span>
                 `;
                 btn.onclick = () => {
-                    loadNode('ato3_role_amarelou');
+                    // No Valentine's Day game, all choices should be available
+                    loadNode(choice.target);
                 };
             } else {
                 btn.classList.add('locked');
@@ -1480,20 +909,13 @@ function startWhatsAppChat(partner) {
     const avatarText = document.getElementById('wa-avatar-text');
     const avatarImg = document.getElementById('wa-avatar-img');
 
-    if (partner === 'ruan') {
-        title.textContent = "Meu Amor 💖 Ruan";
+    if (partner === 'enrique') {
+        title.textContent = "Meu Amor 💖 Enrique";
         status.textContent = "online";
-        // Mostrar foto do Ruan
+        // Mostrar foto do Enrique
         avatarText.style.display = 'none';
-        avatarImg.src = ASSETS.sprites.ruan_namorado;
+        avatarImg.src = ASSETS.sprites.enrique_zen;
         avatarImg.style.display = 'block';
-    } else {
-        title.textContent = "Grupo do Senac 💻🍻";
-        status.textContent = "Enrique, Otávio, Você";
-        // Mostrar emoji de computador
-        avatarText.style.display = 'block';
-        avatarText.textContent = '💻';
-        avatarImg.style.display = 'none';
     }
 
     nextChatStep(partner);
@@ -1502,7 +924,7 @@ function startWhatsAppChat(partner) {
 function nextChatStep(partner) {
     if (!partner) {
         const titleText = document.querySelector('.wa-chat-name').textContent;
-        partner = titleText.includes('Senac') ? 'grupo' : 'ruan';
+        partner = 'enrique';
     }
 
     const script = ChatScripts[partner];
@@ -1512,11 +934,11 @@ function nextChatStep(partner) {
         const msg = script[chatStep];
         const msgDiv = document.createElement('div');
         
-        const isIncoming = msg.author !== 'Julia';
+        const isIncoming = msg.author !== 'Luiza';
         msgDiv.className = `wa-msg ${isIncoming ? 'incoming' : 'outgoing'}`;
         
         let authorSpan = '';
-        if (isIncoming && partner === 'grupo') {
+        if (isIncoming) {
             authorSpan = `<span class="wa-msg-author ${msg.author.toLowerCase()}">${msg.author}</span>`;
         }
 
@@ -1540,26 +962,25 @@ function nextChatStep(partner) {
         chatStep++;
 
         const inputText = document.getElementById('wa-input-text');
-        if (chatStep < script.length && script[chatStep].author === 'Julia') {
+        if (chatStep < script.length && script[chatStep].author === 'Luiza') {
             inputText.textContent = "Tocar para responder...";
         } else {
             inputText.textContent = "Tocar para ler próximas mensagens...";
         }
     } else {
         // Pega o nó de chat ativo e aplica os efeitos
-        const chatNodes = ['ato4_ruan_chat', 'ato4_grupo_chat'];
+        const chatNodes = ['whatsapp_noite'];
         for (const key of chatNodes) {
             const n = StoryNodes[key];
             if (n?.isChat && n?.chatPartner === partner && n?.effects) {
-                energiaJulia += (n.effects.energia || 0);
-                dorJulia += (n.effects.dor || 0);
+                energiaLuiza += (n.effects.energia || 0);
                 applyHeartEffects(n.effects.hearts);
                 updateHUD();
                 break;
             }
         }
         switchScreen('screen-game');
-        loadNode('fim_dia');
+        loadNode('fim_jogo');
     }
 }
 
