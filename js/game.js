@@ -18,6 +18,41 @@ const ASSETS = {
     }
 };
 
+// [SISTEMA DE CLIMA]
+const WeatherTypes = {
+    SUNNY: 'sunny',
+    CLOUDY: 'cloudy',
+    RAINY: 'rainy',
+    STORMY: 'stormy'
+};
+
+let currentWeather = WeatherTypes.SUNNY;
+
+function getRandomWeather() {
+    const weatherOptions = [WeatherTypes.SUNNY, WeatherTypes.CLOUDY, WeatherTypes.RAINY, WeatherTypes.STORMY];
+    return weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
+}
+
+function setWeather(weather) {
+    currentWeather = weather;
+    updateWeatherIcon();
+}
+
+function updateWeatherIcon() {
+    const weatherIcon = document.getElementById('weather-icon');
+    if (!weatherIcon) return;
+    
+    const icons = {
+        [WeatherTypes.SUNNY]: 'fa-sun',
+        [WeatherTypes.CLOUDY]: 'fa-cloud',
+        [WeatherTypes.RAINY]: 'fa-cloud-rain',
+        [WeatherTypes.STORMY]: 'fa-cloud-bolt'
+    };
+    
+    weatherIcon.className = icons[currentWeather] || icons[WeatherTypes.SUNNY];
+}
+
+
 // Estado do Jogo
 let coracoes = {
     enrique: 5
@@ -49,19 +84,55 @@ const StoryNodes = {
             },
             { 
                 speaker: "Luiza", 
-                text: "Dia dos Namorados... O Enrique deve ter preparado algo."
+                text: "Dia dos Namorados... O Enrique deve ter preparado algo.",
+                weatherDialogs: {
+                    [WeatherTypes.RAINY]: "Dia dos Namorados... Tá chovendo. Espero que o Enrique tenha preparado algo pra dentro de casa.",
+                    [WeatherTypes.STORMY]: "Dia dos Namorados... Tá uma tempestade lá fora. Será que a gente ainda vai sair?",
+                    [WeatherTypes.SUNNY]: "Dia dos Namorados... O dia tá lindo! O Enrique deve ter preparado algo.",
+                    [WeatherTypes.CLOUDY]: "Dia dos Namorados... O dia tá nublado. O Enrique deve ter preparado algo."
+                }
             },
             { speaker: "Narrador", text: "Ela se levanta da cama e vai até a janela." }
         ],
-        next: "checar_clima"
+        effects: { energia: +10, hearts: { enrique: 0 } },
+        choices: [
+            { text: "Se arrumar com cuidado.", target: "arrumar_cuidado", costEnergy: 0 },
+            { text: "Se arrumar rápido.", target: "arrumar_rapido", costEnergy: 5 },
+            { text: "Dormir mais 10 minutos.", target: "dormir_mais", costEnergy: -10 }
+        ]
     },
 
-    checar_clima: {
+    arrumar_cuidado: {
+        bg: "casa_julia",
+        time: "08:10",
+        dialogs: [
+            { speaker: "Narrador", text: "Luiza se arruma com cuidado pro encontro." },
+            { speaker: "Luiza", text: "Vou ficar bonita pro Enrique." }
+        ],
+        effects: { energia: -5, hearts: { enrique: 0 } },
+        next: "enrique_chega"
+    },
+
+    arrumar_rapido: {
         bg: "casa_julia",
         time: "08:05",
         dialogs: [
+            { speaker: "Narrador", text: "Luiza se arruma rápido pra não se atrasar." },
             { speaker: "Luiza", text: "Vou me arrumar pro encontro com o Enrique." }
         ],
+        effects: { energia: -5, hearts: { enrique: 0 } },
+        next: "enrique_chega"
+    },
+
+    dormir_mais: {
+        bg: "casa_julia",
+        time: "08:30",
+        dialogs: [
+            { speaker: "Narrador", text: "Luiza decide dormir mais um pouco." },
+            { speaker: "Luiza", text: "Só mais 20 minutinhos..." },
+            { speaker: "Narrador", text: "Ela acorda mais tarde e se arruma correndo." }
+        ],
+        effects: { energia: +10, hearts: { enrique: 0 } },
         next: "enrique_chega"
     },
 
@@ -96,11 +167,11 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Ah, tranquilo. Eu queria fazer algo legal pra você. É Dia dos Namorados, né?", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles tomam café da manhã conversando." }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: +5, hearts: { enrique: +1 } },
         choices: [
-            { text: "Dar um beijo no Enrique. (-10 energia)", target: "beijo_romantico", costEnergy: 10 },
-            { text: "Dizer que ama ele e agradecer. (-5 energia)", target: "declaracao_amor", costEnergy: 5 },
-            { text: "Segurar a mão dele. (-5 energia)", target: "segurar_mao", costEnergy: 5 }
+            { text: "Dar um beijo no Enrique.", target: "beijo_romantico", costEnergy: 15 },
+            { text: "Dizer que ama ele e agradecer.", target: "declaracao_amor", costEnergy: 10 },
+            { text: "Segurar a mão dele.", target: "segurar_mao", costEnergy: 5 }
         ]
     },
 
@@ -144,16 +215,22 @@ const StoryNodes = {
         bg: "praca",
         time: "11:00",
         dialogs: [
-            { speaker: "Narrador", text: "Depois do café, Enrique leva Luiza pra passear no parque." },
-            { speaker: "Enrique", text: "Lembra da primeira vez que a gente veio aqui? Foi faz tempo, né?", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Depois do café, Enrique leva Luiza pra passear no parque.", weatherDialogs: {
+                [WeatherTypes.RAINY]: "Depois do café, Enrique leva Luiza pra passear no parque. Apesar da chuva, eles usam guarda-chuvas.",
+                [WeatherTypes.STORMY]: "Depois do café, Enrique leva Luiza pra passear no parque. A tempestade tá forte, mas eles insistem."
+            }},
+            { speaker: "Enrique", text: "Lembra da primeira vez que a gente veio aqui? Foi faz tempo, né?", chars: ["luiza", "enrique"], weatherDialogs: {
+                [WeatherTypes.RAINY]: "Lembra da primeira vez que a gente veio aqui? Foi faz tempo, né? Mesmo com chuva, o lugar é bonito.",
+                [WeatherTypes.STORMY]: "Lembra da primeira vez que a gente veio aqui? Foi faz tempo, né. Essa tempestade é louca, mas estou feliz com você."
+            }},
             { speaker: "Luiza", text: "Lembro! Eu tô nervosa, e você foi super gentil. Desde então eu sei que você é especial.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Ah, parou. Desde então minha vida mudou. Você é... é importante pra mim.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +20, hearts: { enrique: +1 } },
+        effects: { energia: +5, hearts: { enrique: +1 } },
         choices: [
-            { text: "Sentar no banco e conversar sobre o futuro.", target: "conversa_futuro" },
-            { text: "Dar uma volta de braço dado.", target: "volta_braco" },
-            { text: "Tirar fotos juntos.", target: "fotos_romanticas" }
+            { text: "Sentar no banco e conversar sobre o futuro.", target: "conversa_futuro", costEnergy: 10 },
+            { text: "Dar uma volta de braço dado.", target: "volta_braco", costEnergy: 8 },
+            { text: "Tirar fotos juntos.", target: "fotos_romanticas", costEnergy: 5 }
         ]
     },
 
@@ -166,7 +243,7 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Isso soa bom. Eu não imagino meu futuro sem você.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "E sem você meu futuro não faz sentido. Você é minha pessoa, amor. Sério.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -10, hearts: { enrique: +2 } },
         next: "almoco_romantico"
     },
 
@@ -179,7 +256,7 @@ const StoryNodes = {
             { speaker: "Luiza", text: "E eu me sinto amada. Obrigada por me fazer feliz, Enrique.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "O sol brilha sobre eles enquanto caminham." }
         ],
-        effects: { energia: +20, hearts: { enrique: +1 } },
+        effects: { energia: -8, hearts: { enrique: +1 } },
         next: "almoco_romantico"
     },
 
@@ -192,7 +269,7 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles tiram várias fotos, abraçados, sorrindo." },
             { speaker: "Enrique", text: "Essas fotos vão ficar na minha tela. Você tá linda, princesa.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -5, hearts: { enrique: +1 } },
         next: "almoco_romantico"
     },
 
@@ -207,7 +284,37 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Ah, eu queria que hoje fosse especial. Porque você é especial pra mim.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles almoçam conversando." }
         ],
-        effects: { energia: +30, hearts: { enrique: +1 } },
+        effects: { energia: +5, hearts: { enrique: +1 } },
+        choices: [
+            { text: "Sugerir dar uma volta antes da próxima atividade.", target: "passeio_pos_almoco", costEnergy: 8 },
+            { text: "Ir direto pra próxima atividade.", target: "atividade_tarde", costEnergy: 0 },
+            { text: "Pedir pra descansar um pouco.", target: "descanso_almoco", costEnergy: -10 }
+        ]
+    },
+
+    passeio_pos_almoco: {
+        bg: "centro",
+        time: "13:00",
+        dialogs: [
+            { speaker: "Narrador", text: "Enrique e Luiza dão uma volta pelo centro depois do almoço." },
+            { speaker: "Enrique", text: "A cidade tá bonita hoje, né? Com você fica ainda mais.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Você tá muito romântico hoje, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, parou. É que... é Dia dos Namorados, né?", chars: ["luiza", "enrique"] }
+        ],
+        effects: { energia: -8, hearts: { enrique: +1 } },
+        next: "atividade_tarde"
+    },
+
+    descanso_almoco: {
+        bg: "casa_julia",
+        time: "13:00",
+        dialogs: [
+            { speaker: "Narrador", text: "Luiza pede pra descansar um pouco. Enrique entende e eles vão pra casa dela." },
+            { speaker: "Enrique", text: "Sem problemas, princesa. Descansar é importante.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Obrigada por entender, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles descansam um pouco antes de continuar o dia." }
+        ],
+        effects: { energia: +20, hearts: { enrique: +1 } },
         next: "atividade_tarde"
     },
 
@@ -219,9 +326,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Pra tarde, preparei umas coisas. O que você quer fazer?", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Ir ao cinema ver um filme.", target: "cinema" },
-            { text: "Fazer pintura juntos.", target: "pintura" },
-            { text: "Ir num museu.", target: "museu" }
+            { text: "Ir ao cinema ver um filme.", target: "cinema", costEnergy: 15 },
+            { text: "Fazer pintura juntos.", target: "pintura", costEnergy: 20 },
+            { text: "Ir num museu.", target: "museu", costEnergy: 10 }
         ]
     },
 
@@ -234,7 +341,7 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Você é o melhor! Isso é exatamente o que eu queria.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Durante o filme, Enrique segura a mão de Luiza. Eles riem das partes engraçadas e se abraçam nas emotivas." }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -15, hearts: { enrique: +1 } },
         next: "jantar_romantico"
     },
 
@@ -248,7 +355,7 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles passam a tarde pintando, rindo dos erros um do outro e se ajudando. No final, têm uma pintura feita pelos dois." },
             { speaker: "Enrique", text: "Essa pintura vai ficar na nossa sala. Pra gente lembrar desse Dia dos Namorados.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +30, hearts: { enrique: +1 } },
+        effects: { energia: -20, hearts: { enrique: +2 } },
         next: "jantar_romantico"
     },
 
@@ -261,7 +368,7 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Isso é maravilhoso. Adoro quando você mostra que conhece meus gostos.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles caminham pelas galerias de mãos dadas, comentando as obras." }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -10, hearts: { enrique: +1 } },
         next: "jantar_romantico"
     },
 
@@ -276,8 +383,38 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Você merece o mundo, Luiza. Hoje tentei te dar pelo menos uma parte do quanto você significa pra mim.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles jantam conversando sobre o dia, seus sonhos e o quanto se amam." }
         ],
-        effects: { energia: +30, hearts: { enrique: +1 } },
+        effects: { energia: +5, hearts: { enrique: +1 } },
+        choices: [
+            { text: "Sugerir ver as estrelas antes de ir pra casa.", target: "ver_estrelas", costEnergy: 10, reqWeather: [WeatherTypes.SUNNY, WeatherTypes.CLOUDY] },
+            { text: "Ir direto pra surpresa.", target: "surpresa_final", costEnergy: 0 },
+            { text: "Pedir pra ir pra casa descansar.", target: "ir_casa_jantar", costEnergy: -15 }
+        ]
+    },
+
+    ver_estrelas: {
+        bg: "praca",
+        time: "20:00",
+        dialogs: [
+            { speaker: "Narrador", text: "Enrique e Luiza vão pra um lugar onde dá pra ver as estrelas." },
+            { speaker: "Enrique", text: "O céu tá lindo hoje. Mas não tanto quanto você, princesa.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Você tá muito fofo hoje, Enrique.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Ah, parou. É que... eu tô feliz, sabe?", chars: ["luiza", "enrique"] }
+        ],
+        effects: { energia: -10, hearts: { enrique: +2 } },
         next: "surpresa_final"
+    },
+
+    ir_casa_jantar: {
+        bg: "casa_julia",
+        time: "20:00",
+        dialogs: [
+            { speaker: "Narrador", text: "Luiza tá cansada e pede pra ir pra casa. Enrique entende." },
+            { speaker: "Enrique", text: "Sem problemas, princesa. Vamos pra casa.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Obrigada por entender, Enrique. Hoje foi incrível.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique leva Luiza pra casa mais cedo." }
+        ],
+        effects: { energia: +20, hearts: { enrique: +1 } },
+        next: "casa"
     },
 
     surpresa_final: {
@@ -293,7 +430,7 @@ const StoryNodes = {
             { speaker: "Luiza", text: "*(Com lágrimas nos olhos)* Eu vou usar todos os dias. Te amo tanto, Enrique.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "*(Coloca o colar no pescoço dela)* Você fica ainda mais linda com ele. Feliz Dia dos Namorados.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +35, hearts: { enrique: +1 } },
+        effects: { energia: -5, hearts: { enrique: +2 } },
         next: "casa"
     },
 
@@ -307,11 +444,11 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Você é a pessoa mais amada do mundo, princesa. E eu prometo que vou continuar te fazendo feliz.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles se abraçam na porta de casa, não querendo que o dia acabe." }
         ],
-        effects: { energia: +20, hearts: { enrique: +1 } },
+        effects: { energia: +5, hearts: { enrique: +1 } },
         choices: [
-            { text: "Convidar o Enrique para entrar.", target: "enrique_entra" },
-            { text: "Despedir-se com um beijo de boa noite.", target: "despedida_beijo" },
-            { text: "Pedir para ele ficar mais um pouco.", target: "ficar_mais" }
+            { text: "Convidar o Enrique para entrar.", target: "enrique_entra", costEnergy: 15 },
+            { text: "Despedir-se com um beijo de boa noite.", target: "despedida_beijo", costEnergy: 5 },
+            { text: "Pedir para ele ficar mais um pouco.", target: "ficar_mais", costEnergy: 10 }
         ]
     },
 
@@ -325,7 +462,7 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Princesa, hoje foi o dia mais especial da minha vida. Obrigado por ser minha namorada.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você fez tudo perfeito, Enrique. Eu te amo.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -15, hearts: { enrique: +2 } },
         next: "whatsapp_noite"
     },
 
@@ -337,7 +474,7 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Foi um prazer. *(Dá um beijo de boa noite)* Até amanhã.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Luiza entra em casa com o coração cheio. O Dia dos Namorados foi inesquecível." }
         ],
-        effects: { energia: +20, hearts: { enrique: +1 } },
+        effects: { energia: -5, hearts: { enrique: +1 } },
         next: "whatsapp_noite"
     },
 
@@ -350,7 +487,7 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles ficam abraçados na porta, aproveitando cada último momento juntos." },
             { speaker: "Enrique", text: "Cada segundo com você é um presente. Feliz Dia dos Namorados, princesa.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +25, hearts: { enrique: +1 } },
+        effects: { energia: -10, hearts: { enrique: +1 } },
         next: "whatsapp_noite"
     },
 
@@ -375,6 +512,17 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Boa noite, Luiza." }
         ],
         next: "show_goodnight_screen"
+    },
+
+    fim_jogo_ruim: {
+        bg: "casa_julia",
+        time: "23:30",
+        dialogs: [
+            { speaker: "Narrador", text: "Luiza tá exausta. O dia foi muito intenso e ela não teve energia pra aproveitar tudo." },
+            { speaker: "Narrador", text: "Ela adormece triste, sentindo que poderia ter feito mais." },
+            { speaker: "Narrador", text: "Fim de jogo. Tente novamente e gerencie sua energia melhor!" }
+        ],
+        next: "show_bad_ending_screen"
     },
 };
 
@@ -452,10 +600,13 @@ function startGame() {
     roupaEscolhida = "";
     lastTime = "08:00";
 
-    // Gerar Energia aleatória entre 80% e 100%
+    // Gerar Energia aleatória entre 80 e 100 pontos
     energiaLuiza = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
 
     dialogHistory = [];
+
+    // Initialize random weather
+    setWeather(getRandomWeather());
 
     updateHUD();
     switchScreen('screen-game');
@@ -509,13 +660,13 @@ function updateHUD() {
     
     energiaLuiza = Math.max(0, Math.min(100, energiaLuiza));
 
-    document.getElementById('val-energia').textContent = energiaLuiza + '%';
+    document.getElementById('val-energia').textContent = energiaLuiza;
     document.getElementById('bar-energia').style.width = energiaLuiza + '%';
 
     // Sincroniza barras do drawer mobile
     const dValEn = document.getElementById('drawer-val-energia');
     const dBarEn = document.getElementById('drawer-bar-energia');
-    if (dValEn) dValEn.textContent = energiaLuiza + '%';
+    if (dValEn) dValEn.textContent = energiaLuiza;
     if (dBarEn) dBarEn.style.width = energiaLuiza + '%';
 }
 
@@ -604,6 +755,12 @@ function showHistoryFromDrawer() {
 function loadNode(nodeKey) {
     currentNodeKey = nodeKey;
 
+    // Check if energy is too low and trigger bad ending
+    if (energiaLuiza <= 0 && nodeKey !== "fim_jogo_ruim" && nodeKey !== "fim_jogo") {
+        loadNode("fim_jogo_ruim");
+        return;
+    }
+
     if (nodeKey.startsWith("roupa_")) {
         roupaEscolhida = nodeKey.replace("roupa_", "");
         setupClimaDialogs();
@@ -658,6 +815,12 @@ function playNextDialog(currentNodeObj) {
         const item = storyQueue[queueIndex];
         
         let textToPlay = item.text;
+        
+        // Check for weather-based dialogue variations
+        if (item.weatherDialogs && item.weatherDialogs[currentWeather]) {
+            textToPlay = item.weatherDialogs[currentWeather];
+        }
+        
         if (item.conditional) {
             for (let branch of item.conditional) {
                 if (branch.cond()) {
@@ -856,6 +1019,18 @@ function showChoices(choices) {
             lockReason = `Requer Energia >= ${choice.reqEnergyMin}%`;
         }
 
+        // Requisito de Clima
+        if (choice.reqWeather && !choice.reqWeather.includes(currentWeather)) {
+            isLocked = true;
+            const weatherNames = {
+                [WeatherTypes.SUNNY]: 'Sol',
+                [WeatherTypes.CLOUDY]: 'Nublado',
+                [WeatherTypes.RAINY]: 'Chuva',
+                [WeatherTypes.STORMY]: 'Tempestade'
+            };
+            lockReason = `Clima inadequado`;
+        }
+
         if (isLocked) {
             // Se o bloqueio for por corações, não mostra como bloqueado visualmente
             if (choice.reqHearts && !hasRequiredHearts(choice.reqHearts)) {
@@ -882,6 +1057,12 @@ function showChoices(choices) {
                 <span>${choice.text}</span>
             `;
             btn.onclick = () => {
+                // Deduct energy cost if specified
+                if (choice.costEnergy) {
+                    energiaLuiza -= choice.costEnergy;
+                    updateHUD();
+                }
+                
                 if (choice.target === 'go_victory') {
                     showVictoryScreen();
                 } else {
