@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dia Comum</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome (para ícones modernos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- JS Import -->
+    <script src="js/game.js" defer></script>
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <!-- ==================== TELA: MENU PRINCIPAL ==================== -->
+        <div id="screen-menu" class="screen active">
+            <div class="logo-container">
+                <h1 class="game-title">Dia Comum</h1>
+            </div>
+            
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="startGame()">
+                    <i class="fa-solid fa-play"></i> Iniciar Jogo
+                </button>
+                <button class="btn" onclick="openModal('about-modal')">
+                    <i class="fa-solid fa-circle-info"></i> Sobre o Presente
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TELA: JOGO (VISUAL NOVEL) ==================== -->
+        <div id="screen-game" class="screen">
+            
+            <!-- HUD Superior -->
+            <div class="hud-header">
+                <!-- Status da Julia e Hora -->
+                <div style="display: flex; gap: 0.75rem; align-items: center; pointer-events: auto;">
+                    <!-- Widget do Relógio e Clima -->
+                    <div class="hud-time" title="Hora do Dia e Clima">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="hud-time-val">05:30</span>
+                        <span class="hud-time-sep">|</span>
+                        <span id="hud-weather-icon">🌙</span>
+                    </div>
+
+                    <div class="hud-card hud-meters-card">
+                        <div class="hud-meters">
+                            <div class="meter-group">
+                                <div class="meter-label">
+                                    <span>Energia</span>
+                                    <span id="val-energia">30%</span>
+                                </div>
+                                <div class="meter-bar-outer">
+                                    <div id="bar-energia" class="meter-bar-inner bar-energy" style="width: 30%"></div>
+                                </div>
+                            </div>
+                            <div class="meter-group">
+                                <div class="meter-label">
+                                    <span>Dores</span>
+                                    <span id="val-dor">80%</span>
+                                </div>
+                                <div class="meter-bar-outer">
+                                    <div id="bar-dor" class="meter-bar-inner bar-pain" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Corações com Meninos e Menu Hambúrguer -->
+                <div style="display: flex; gap: 0.75rem; pointer-events: auto; align-items: center;">
+                    <!-- Card de corações visível no Desktop, oculto no mobile -->
+                    <div class="hud-card hud-affinity-card">
+                        <div class="hud-affinity">
+                            <div class="affinity-badge" title="Corações com Enrique">
+                                Enrique: <span id="score-enrique" class="heart-meter"></span>
+                            </div>
+                            <div class="affinity-badge" title="Corações com Otávio">
+                                Otávio: <span id="score-otavio" class="heart-meter"></span>
+                            </div>
+                            <div class="affinity-badge affinity-ruan" title="Corações com Ruan">
+                                Ruan: <span id="score-ruan" class="heart-meter"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão de Diário visível no Desktop, oculto no mobile -->
+                    <button class="hud-menu-btn hud-diary-btn" onclick="showHistory()" title="Ver Histórico/Diário">
+                        <i class="fa-solid fa-book-open"></i>
+                    </button>
+                    
+                    <!-- Botão Hambúrguer para abrir o menu lateral -->
+                    <button class="hud-menu-btn hamburger-btn" onclick="toggleHamburgerMenu()" title="Menu de Status e Diário">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu Lateral (Drawer) para Mobile / Hambúrguer -->
+            <div id="hamburger-drawer" class="drawer-overlay" onclick="toggleHamburgerMenu()">
+                <div class="drawer-content" onclick="event.stopPropagation()">
+                    <div class="drawer-header">
+                        <h3>Status & Diário</h3>
+                        <button class="drawer-close" onclick="toggleHamburgerMenu()">&times;</button>
+                    </div>
+                    <div class="drawer-body">
+                        <!-- Energia e Dores no Mobile -->
+                        <div class="drawer-section">
+                            <h4>Status da Julia</h4>
+                            <div class="drawer-meters">
+                                <div class="meter-group">
+                                    <div class="meter-label">
+                                        <span>Energia</span>
+                                        <span id="drawer-val-energia">30%</span>
+                                    </div>
+                                    <div class="meter-bar-outer">
+                                        <div id="drawer-bar-energia" class="meter-bar-inner bar-energy" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div class="meter-group">
+                                    <div class="meter-label">
+                                        <span>Dores</span>
+                                        <span id="drawer-val-dor">80%</span>
+                                    </div>
+                                    <div class="meter-bar-outer">
+                                        <div id="drawer-bar-dor" class="meter-bar-inner bar-pain" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Corações no Mobile -->
+                        <div class="drawer-section">
+                            <h4>Corações</h4>
+                            <div class="drawer-affinity-list">
+                                <div class="affinity-badge">
+                                    Enrique: <span id="drawer-score-enrique" class="heart-meter"></span>
+                                </div>
+                                <div class="affinity-badge">
+                                    Otávio: <span id="drawer-score-otavio" class="heart-meter"></span>
+                                </div>
+                                <div class="affinity-badge affinity-ruan">
+                                    Ruan: <span id="drawer-score-ruan" class="heart-meter"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Link para abrir o diário -->
+                        <div class="drawer-section">
+                            <h4>Diário da Ju</h4>
+                            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="showHistoryFromDrawer()">
+                                <i class="fa-solid fa-book-open"></i> Abrir Diário
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Camada de Sprites dos Personagens -->
+            <div class="sprites-layer">
+                <!-- Julia -->
+                <div id="sprite-julia" class="character-sprite-container">
+                    <img id="img-julia" class="sprite-img" src="" alt="Julia" onerror="fallbackSprite('julia')">
+                </div>
+                <!-- Enrique -->
+                <div id="sprite-enrique" class="character-sprite-container">
+                    <img id="img-enrique" class="sprite-img" src="" alt="Enrique" onerror="fallbackSprite('enrique')">
+                </div>
+                <!-- Otávio -->
+                <div id="sprite-otavio" class="character-sprite-container">
+                    <img id="img-otavio" class="sprite-img" src="" alt="Otávio" onerror="fallbackSprite('otavio')">
+                </div>
+                <!-- Ruan -->
+                <div id="sprite-ruan" class="character-sprite-container">
+                    <img id="img-ruan" class="sprite-img" src="" alt="Ruan" onerror="fallbackSprite('ruan')">
+                </div>
+            </div>
+
+            <!-- Fog/Gradiente de fundo -->
+            <div class="dialog-fog"></div>
+
+            <!-- Camada de Diálogo e Escolhas -->
+            <div class="dialog-layer">
+                <!-- Container de Decisões -->
+                <div id="choices-container" class="choices-container" style="display: none;">
+                    <!-- Botões de escolha inseridos dinamicamente aqui -->
+                </div>
+
+                <!-- Caixa de Diálogo Principal -->
+                <div class="dialog-box" onclick="onDialogBoxClick()">
+                    <div id="dialog-name" class="dialog-name-tag">Narrador</div>
+                    <div id="dialog-text" class="dialog-text">
+                        Carregando dia...
+                    </div>
+                    <div class="dialog-cursor">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== TELA: CHAT WHATSAPP ==================== -->
+        <div id="screen-whatsapp" class="screen">
+            <div class="wa-header">
+                <div class="wa-avatar" id="wa-avatar">
+                    <span id="wa-avatar-text">Senac</span>
+                    <img id="wa-avatar-img" src="" alt="" style="display: none;">
+                </div>
+                <div class="wa-chat-info">
+                    <div class="wa-chat-name" id="wa-chat-name">Grupo do Senac 💻🍻</div>
+                    <div class="wa-chat-status" id="wa-chat-status">Otávio, Enrique, Você</div>
+                </div>
+            </div>
+            
+            <div id="wa-chat-body" class="wa-chat-body">
+                <!-- Mensagens do WhatsApp inseridas dinamicamente -->
+            </div>
+
+            <div class="wa-footer">
+                <div class="wa-input-box" onclick="nextChatStep()">
+                    <span id="wa-input-text">Tocar para ler próximas mensagens...</span>
+                    <i class="fa-solid fa-paper-plane" style="color: #00a884;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TELA DE BOA NOITE ==================== -->
+        <div id="screen-goodnight" class="screen">
+            <div class="stars-container" id="stars-container-goodnight"></div>
+            <div class="goodnight-container">
+                <h1 class="goodnight-title">Boa noite, Ju.</h1>
+                <p class="goodnight-subtitle">Espero que teu dia comum tenha sido divertio.</p>
+                <button class="btn btn-primary" onclick="location.reload()" style="z-index: 10; max-width: 250px; margin-top: 2rem;">
+                    <i class="fa-solid fa-rotate-right"></i> Recomeçar o dia
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL: HISTÓRICO ==================== -->
+        <div id="log-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Diário da Ju</div>
+                    <button class="modal-close" onclick="closeModal('log-modal')">&times;</button>
+                </div>
+                <div class="modal-body" id="log-modal-body">
+                    <p style="color: var(--text-muted); text-align: center;">Nenhum diálogo registrado ainda. Inicie o jogo!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL: SOBRE ==================== -->
+        <div id="about-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Sobre o Presente</div>
+                    <button class="modal-close" onclick="closeModal('about-modal')">&times;</button>
+                </div>
+                <div class="modal-body" style="line-height: 1.6;">
+                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Feito ❤️ com  para a Ju</h3>
+                    <p>Este jogo é um presente que fiz para você, para que nunca se esqueça dos bons e as vezes nem tão bons momentos que tivemos no Senac. <br><br>Tu foi minha aluna favorita, apesar da mais problemática, aprendemos muito juntos um com o outro, e sou muito grato por isso. Aguentamos tudo junto, e vou sentir muita falta da sua presença.</p>
+                    <p style="margin-top: 1rem;"> A rotina pode parecer chata e repetitiva agora, mas tenho certeza que você vai sentir falta quando estiver longe. Mas que isso não te abale, pois espero que tu tenha uma jornada incrível.</p>
+                    <p style="margin-top: 1rem; color: var(--secondary); font-weight: bold;">Boa viagem, Ju.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
