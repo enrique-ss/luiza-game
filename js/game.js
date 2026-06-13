@@ -36,15 +36,15 @@ function setWeather(weather) {
     currentWeather = weather;
     console.log('Weather set to:', currentWeather);
     try {
-        updateWeatherIcon();
-        console.log('updateWeatherIcon() finished');
+        updateWeatherIconHUD();
+        console.log('updateWeatherIconHUD() finished');
     } catch (error) {
-        console.error('Error in updateWeatherIcon:', error);
+        console.error('Error in updateWeatherIconHUD:', error);
     }
 }
 
-function updateWeatherIcon() {
-    console.log('updateWeatherIcon() called');
+function updateWeatherIconHUD() {
+    console.log('updateWeatherIconHUD() called');
     const weatherIcon = document.getElementById('weather-icon');
     console.log('Weather icon element:', weatherIcon);
     console.log('Current weather:', currentWeather);
@@ -56,7 +56,7 @@ function updateWeatherIcon() {
     const icons = {
         [WeatherTypes.SOL]: 'fa-sun',
         [WeatherTypes.CHUVA]: 'fa-cloud-rain',
-        [WeatherTypes.FRIO]: 'fa-icicles'
+        [WeatherTypes.FRIO]: 'fa-snowflake'
     };
     
     const newIconClass = icons[currentWeather] || icons[WeatherTypes.SOL];
