@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="css/style.css">
     
     <!-- JS Import -->
+    <script src="js/config.js" defer></script>
+    <script src="js/history.js" defer></script>
     <script src="js/game.js" defer></script>
 </head>
 <body>
@@ -80,6 +82,9 @@
                             <div class="affinity-badge" title="Corações com Enrique">
                                 Enrique: <span id="score-enrique" class="heart-meter"></span>
                             </div>
+                            <div class="affinity-badge" title="Corações com Talita">
+                                Talita: <span id="score-talita" class="heart-meter"></span>
+                            </div>
                         </div>
                     </div>
                     
@@ -126,6 +131,9 @@
                                 <div class="affinity-badge">
                                     Enrique: <span id="drawer-score-enrique" class="heart-meter"></span>
                                 </div>
+                                <div class="affinity-badge">
+                                    Talita: <span id="drawer-score-talita" class="heart-meter"></span>
+                                </div>
                             </div>
                         </div>
                         
@@ -151,6 +159,10 @@
                 <div id="sprite-enrique" class="character-sprite-container">
                     <img id="img-enrique" class="sprite-img" src="" alt="Enrique" onerror="fallbackSprite('enrique')">
                 </div>
+                <!-- Talita -->
+                <div id="sprite-talita" class="character-sprite-container">
+                    <img id="img-talita" class="sprite-img" src="" alt="Talita" onerror="fallbackSprite('talita')">
+                </div>
             </div>
 
             <!-- Fog/Gradiente de fundo -->
@@ -164,7 +176,7 @@
                 </div>
 
                 <!-- Caixa de Diálogo Principal -->
-                <div class="dialog-box" onclick="onDialogBoxClick()">
+                <div id="dialog-box" class="dialog-box" onclick="onDialogBoxClick()">
                     <div id="dialog-name" class="dialog-name-tag">Narrador</div>
                     <div id="dialog-text" class="dialog-text">
                         Carregando dia...
