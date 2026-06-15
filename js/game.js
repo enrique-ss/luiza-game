@@ -455,13 +455,15 @@ function showDialogText(speaker, text, activeCharKey) {
     const previousSpeakerCharKey = previousSpeaker ? getCharacterKeyFromSpeaker(previousSpeaker) : null;
     previousSpeaker = speaker;
     
-    // Dynamic sprite logic: always show current speaker + previous speaker (if different)
+    // Dynamic sprite logic: always show current speaker + previous speaker (if different), but hide all if Narrator
     let activeCharKeys = [];
-    if (speakerCharKey) {
-        activeCharKeys.push(speakerCharKey);
-    }
-    if (previousSpeakerCharKey && previousSpeakerCharKey !== speakerCharKey) {
-        activeCharKeys.push(previousSpeakerCharKey);
+    if (getSpeakerClassName(speaker) !== 'narrador') {
+        if (speakerCharKey) {
+            activeCharKeys.push(speakerCharKey);
+        }
+        if (previousSpeakerCharKey && previousSpeakerCharKey !== speakerCharKey) {
+            activeCharKeys.push(previousSpeakerCharKey);
+        }
     }
     
     nameTag.textContent = speaker;
