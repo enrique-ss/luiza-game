@@ -101,23 +101,37 @@ window.onload = function() {
 };
 
 function preloadSprites() {
-    document.getElementById('img-luiza').src = ASSETS.sprites.luiza;
-    document.getElementById('img-enrique').src = ASSETS.sprites.enrique_zen;
-    document.getElementById('img-talita').src = ASSETS.sprites.talita;
+    const imgLuiza = document.getElementById('img-luiza');
+    const imgEnrique = document.getElementById('img-enrique');
+    const imgTalita = document.getElementById('img-talita');
+
+    if (imgLuiza) {
+        imgLuiza.style.display = '';
+        imgLuiza.src = ASSETS.sprites.luiza;
+    }
+    if (imgEnrique) {
+        imgEnrique.style.display = '';
+        imgEnrique.src = ASSETS.sprites.enrique_zen;
+    }
+    if (imgTalita) {
+        imgTalita.style.display = '';
+        imgTalita.src = ASSETS.sprites.talita;
+    }
 }
 
 // Função para atualizar o sprite da Luiza
 function updateLuizaSprite(nodeKey) {
     const imgLuiza = document.getElementById('img-luiza');
     if (imgLuiza && ASSETS.sprites.luiza) {
+        imgLuiza.style.display = '';
         imgLuiza.src = ASSETS.sprites.luiza;
     }
 }
 
 function fallbackSprite(character) {
-    // Apenas silencia o erro, pois futuramente serão adicionados arquivos PNG válidos.
     const img = document.getElementById(`img-${character}`);
-    if (img) {
+    // Apenas esconde se a imagem realmente falhou ao tentar carregar um src válido
+    if (img && img.src && !img.src.endsWith('/') && img.getAttribute('src') !== '') {
         img.style.display = 'none'; // Esconde a imagem quebrada
     }
 }
@@ -205,19 +219,19 @@ function getNameColor(name) {
 
 // Atualizar Informações na HUD
 function updateHUD() {
-    // Enrique tem máximo de 5 corações
-    coracoes.enrique = Math.max(0, Math.min(5, coracoes.enrique));
+    // Enrique tem máximo de 10 corações
+    coracoes.enrique = Math.max(0, Math.min(10, coracoes.enrique));
 
-    updateHeartMeter('score-enrique', coracoes.enrique, 5);
+    updateHeartMeter('score-enrique', coracoes.enrique, 10);
     
-    // Talita tem máximo de 5 corações
-    coracoes.talita = Math.max(0, Math.min(5, coracoes.talita));
+    // Talita tem máximo de 10 corações
+    coracoes.talita = Math.max(0, Math.min(10, coracoes.talita));
 
-    updateHeartMeter('score-talita', coracoes.talita, 5);
+    updateHeartMeter('score-talita', coracoes.talita, 10);
     
     // Sincroniza também os valores no drawer mobile
-    updateHeartMeter('drawer-score-enrique', coracoes.enrique, 5);
-    updateHeartMeter('drawer-score-talita', coracoes.talita, 5);
+    updateHeartMeter('drawer-score-enrique', coracoes.enrique, 10);
+    updateHeartMeter('drawer-score-talita', coracoes.talita, 10);
     
     energiaLuiza = Math.max(0, Math.min(100, energiaLuiza));
 
@@ -424,8 +438,8 @@ function applyHeartEffects(heartEffects) {
 
     Object.entries(heartEffects).forEach(([personagem, amount]) => {
         if (coracoes[personagem] === undefined) return;
-        // Enrique tem máximo de 5 corações
-        const maxHearts = 5;
+        // Enrique tem máximo de 10 corações
+        const maxHearts = 10;
         coracoes[personagem] = Math.max(0, Math.min(maxHearts, coracoes[personagem] + amount));
     });
 }
@@ -457,8 +471,24 @@ function showDialogText(speaker, text, activeCharKey) {
     if (speakerCharKey && SPRITE_STYLES[speakerCharKey]) {
         const style = SPRITE_STYLES[speakerCharKey];
         dialogBox.style.borderColor = style.color;
+        
+        // Atualizar cor da seta pulsante (dialog cursor)
+        const dialogCursor = document.querySelector('.dialog-cursor');
+        if (dialogCursor) {
+            dialogCursor.style.color = style.color;
+        }
     } else {
         dialogBox.style.borderColor = 'var(--surface-border)';
+        
+        // Resetar cor da seta para branco se for narrador, ou padrão caso contrário
+        const dialogCursor = document.querySelector('.dialog-cursor');
+        if (dialogCursor) {
+            if (speaker === 'Narrador') {
+                dialogCursor.style.color = '#ffffff';
+            } else {
+                dialogCursor.style.color = 'var(--primary)';
+            }
+        }
     }
 
     dialogHistory.push({ name: speaker, text: text });
@@ -559,6 +589,12 @@ function onDialogBoxClick() {
         document.getElementById('dialog-text').textContent = currentText;
         isTyping = false;
     } else {
+        // Se as opções estiverem visíveis na tela, o jogador é obrigado a escolher uma
+        const choicesContainer = document.getElementById('choices-container');
+        if (choicesContainer && choicesContainer.style.display === 'flex') {
+            return;
+        }
+
         const activeNodeKey = getActiveNodeKey();
         if (activeNodeKey) {
             playNextDialog(StoryNodes[activeNodeKey]);
@@ -592,7 +628,10 @@ function showChoices(choices) {
     const container = document.getElementById('choices-container');
     container.innerHTML = '';
     
-    choices.forEach(choice => {
+    // Embaralha as opções para não ficarem na mesma ordem
+    const shuffledChoices = [...choices].sort(() => Math.random() - 0.5);
+    
+    shuffledChoices.forEach(choice => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         
@@ -632,6 +671,13 @@ function showChoices(choices) {
                 `;
                 btn.onclick = () => {
                     // No Valentine's Day game, all choices should be available
+                    if (choice.hearts) {
+                        applyHeartEffects(choice.hearts);
+                    }
+                    if (choice.costEnergy) {
+                        energiaLuiza -= choice.costEnergy;
+                    }
+                    updateHUD();
                     loadNode(choice.target);
                 };
             } else {
@@ -653,8 +699,14 @@ function showChoices(choices) {
                 // Deduct energy cost if specified
                 if (choice.costEnergy) {
                     energiaLuiza -= choice.costEnergy;
-                    updateHUD();
                 }
+                
+                // Apply hearts change from choice
+                if (choice.hearts) {
+                    applyHeartEffects(choice.hearts);
+                }
+                
+                updateHUD();
                 
                 if (choice.target === 'go_victory') {
                     showVictoryScreen();
