@@ -25,6 +25,7 @@ const SPRITE_STYLES = {
 };
 
 let currentWeather = WeatherTypes.SOL;
+let previousSpeaker = null;
 
 function getRandomWeather() {
     const weatherOptions = [WeatherTypes.SOL, WeatherTypes.CHUVA, WeatherTypes.FRIO];
@@ -314,6 +315,9 @@ function showHistoryFromDrawer() {
 // Carregar um nó da história
 function loadNode(nodeKey) {
     currentNodeKey = nodeKey;
+    
+    // Reset previous speaker when loading a new scene for dynamic sprite alternation
+    previousSpeaker = null;
 
     // Check if energy is too low and trigger bad ending
     if (energiaLuiza <= 0 && nodeKey !== "fim_jogo_ruim" && nodeKey !== "fim_jogo") {
@@ -432,7 +436,19 @@ function showDialogText(speaker, text, activeCharKey) {
     const textBox = document.getElementById('dialog-text');
     const dialogBox = document.getElementById('dialog-box');
     const speakerCharKey = getCharacterKeyFromSpeaker(speaker);
-    const activeCharKeys = getActiveCharacterKeys(activeCharKey, speakerCharKey);
+    
+    // Track previous speaker for dynamic sprite alternation
+    const previousSpeakerCharKey = previousSpeaker ? getCharacterKeyFromSpeaker(previousSpeaker) : null;
+    previousSpeaker = speaker;
+    
+    // Dynamic sprite logic: always show current speaker + previous speaker (if different)
+    let activeCharKeys = [];
+    if (speakerCharKey) {
+        activeCharKeys.push(speakerCharKey);
+    }
+    if (previousSpeakerCharKey && previousSpeakerCharKey !== speakerCharKey) {
+        activeCharKeys.push(previousSpeakerCharKey);
+    }
     
     nameTag.textContent = speaker;
     nameTag.className = 'dialog-name-tag ' + getSpeakerClassName(speaker);
