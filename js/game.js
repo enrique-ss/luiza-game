@@ -753,8 +753,7 @@ function nextChatStep(partner) {
                 break;
             }
         }
-        switchScreen('screen-game');
-        loadNode('fim_jogo');
+        switchScreen('screen-final');
     }
 }
 

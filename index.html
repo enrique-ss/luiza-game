@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <!-- Font Awesome (para ícones modernos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,6 +34,22 @@
             <div class="menu-buttons">
                 <button class="btn btn-primary" onclick="startGame()">
                     <i class="fa-solid fa-play"></i> Iniciar Jogo
+                </button>
+                <button class="btn" onclick="openModal('about-modal')">
+                    <i class="fa-solid fa-heart"></i> Sobre o Presente
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TELA FINAL ==================== -->
+        <div id="screen-final" class="screen">
+            <div class="logo-container">
+                <h1 class="game-title">Um dia Doce</h1>
+            </div>
+            
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="location.reload()">
+                    <i class="fa-solid fa-rotate-right"></i> Recomeçar
                 </button>
                 <button class="btn" onclick="openModal('about-modal')">
                     <i class="fa-solid fa-heart"></i> Sobre o Presente

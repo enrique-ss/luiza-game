@@ -10,7 +10,25 @@
 
 ## Backgrounds (Cenários) Organizados por Contexto
 
-### 🌅 MANHÃ (08:00 - 13:00) - Café da Manhã e Almoço
+### � TELA INICIAL (Menu Principal)
+
+#### 0. bg_menu.jpg (menu)
+- **Localização**: `assets/bg_menu.jpg`
+- **Contexto**: Tela inicial/menu principal do jogo
+- **Descrição**: Cenário romântico e aconchegante para a tela inicial, com elementos que remetem ao Dia dos Namorados e ao romance entre Luiza e Enrique. Pode ser um pôr do sol romântico, um parque iluminado, ou um ambiente intimista com cores quentes e vibrantes.
+- **Prompt IA**: "Indie pixel art romantic game menu background, warm golden hour sunset or illuminated park scene, romantic atmosphere with hearts and love elements, vibrant warm colors, cozy intimate setting, 16-bit style, 800x600 resolution"
+- **Uso**: Tela inicial/menu principal
+
+#### 0.5. bg_final.jpg (final)
+- **Localização**: `assets/bg_final.jpg`
+- **Contexto**: Tela final do jogo (após conclusão)
+- **Descrição**: Cenário romântico e celebrativo para a tela final, mostrando o final feliz do Dia dos Namorados. Pode ser um pôr do sol romântico com casal abraçado, um parque iluminado ao entardecer, ou um ambiente intimista com cores quentes e vibrantes que representam o amor e a celebração.
+- **Prompt IA**: "Indie pixel art romantic game final screen background, warm golden hour sunset with couple embracing or illuminated park scene, romantic celebration atmosphere with hearts and love elements, vibrant warm colors, cozy intimate setting, 16-bit style, 800x600 resolution"
+- **Uso**: Tela final após conclusão do jogo
+
+---
+
+### �🌅 MANHÃ (08:00 - 13:00) - Café da Manhã e Almoço
 
 #### 1. bg_casa.jpg (casa_luiza_manha)
 - **Localização**: `assets/bg_casa.jpg`

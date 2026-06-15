@@ -4,6 +4,8 @@
 // [SISTEMA DE ASSETS/IMAGENS]
 const ASSETS = {
     backgrounds: {
+        menu: "assets/bg_menu.jpg",
+        final: "assets/bg_final.jpg",
         casa_luiza_manha: "assets/bg_casa.jpg",
         casa_luiza_noite: "assets/bg_casa_noite.jpg",
         cantina_manha: "assets/bg_cantina.jpg",

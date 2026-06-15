@@ -1,8 +1,8 @@
 :root {
-    --primary: #e06c75;
-    --primary-glow: rgba(224, 108, 117, 0.4);
-    --secondary: #e06c75;
-    --accent: #e06c75;
+    --primary: #ff2d55;
+    --primary-glow: rgba(255, 45, 85, 0.4);
+    --secondary: #ff2d55;
+    --accent: #ff2d55;
     --background: #282a36;
     --surface: rgba(40, 42, 54, 0.75);
     --surface-border: rgba(255, 255, 255, 0.1);
@@ -51,7 +51,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.56);
     pointer-events: none;
     z-index: 1;
 }
@@ -78,9 +78,19 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.56);
     pointer-events: none;
     z-index: 1;
+}
+
+/* Exclude menu screen from darker filter completely */
+#screen-menu::before {
+    display: none;
+}
+
+/* Exclude final screen from darker filter completely */
+#screen-final::before {
+    display: none;
 }
 
 .screen.active {
@@ -92,7 +102,27 @@ body {
 /* Tela de Menu */
 #screen-menu {
     background: linear-gradient(135deg, rgba(40, 42, 54, 0.95), rgba(98, 114, 164, 0.4)), 
-                radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%);
+                radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%),
+                url('../assets/bg_menu.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Tela Final */
+#screen-final {
+    background: linear-gradient(135deg, rgba(40, 42, 54, 0.95), rgba(98, 114, 164, 0.4)), 
+                radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%),
+                url('../assets/bg_final.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,9 +137,9 @@ body {
 }
 
 .game-title {
-    font-family: var(--font-dialog);
-    font-size: 4.5rem;
-    font-weight: 700;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 3.5rem;
+    font-weight: 400;
     background: linear-gradient(45deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
