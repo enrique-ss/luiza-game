@@ -26,6 +26,8 @@ let coracoes = {
 };
 let currentNodeKey = null;
 let energiaLuiza = 80;
+let visitedNodes = new Set();
+const EXHAUSTION_ENERGY_THRESHOLD = 20;
 
 const ENERGY_EFFECTS = {
     'cansativa': -10,
@@ -52,6 +54,7 @@ let typingInterval = null;
 let isTyping = false;
 let currentText = "";
 let chatStep = 0;
+let exhaustionWarningShownForNode = null;
 
 // Inicializar o jogo ao carregar
 window.onload = function() {
@@ -108,6 +111,8 @@ function startGame() {
     energiaLuiza = Math.floor(Math.random() * (100 - 90 + 1)) + 90;
 
     dialogHistory = [];
+    visitedNodes = new Set();
+    exhaustionWarningShownForNode = null;
 
     updateHUD();
     switchScreen('screen-game');
@@ -266,6 +271,7 @@ function showHistoryFromDrawer() {
 // Carregar um nó da história
 function loadNode(nodeKey) {
     currentNodeKey = nodeKey;
+    visitedNodes.add(nodeKey);
     
     // Reset previous speaker when loading a new scene for dynamic sprite alternation
     previousSpeaker = null;
@@ -276,10 +282,18 @@ function loadNode(nodeKey) {
         return;
     }
 
-
-
     const node = StoryNodes[nodeKey];
     if (!node) return;
+
+    if (node.effects) {
+        if (node.effects.energia) {
+            applyEnergyEffect(node.effects.energia);
+        }
+        if (node.effects.hearts) {
+            applyHeartEffects(node.effects.hearts);
+        }
+        updateHUD();
+    }
 
     const gameScreen = document.getElementById('screen-game');
     gameScreen.className = 'screen active';
@@ -340,11 +354,17 @@ function playNextDialog(currentNodeObj) {
         if (currentNodeObj.isChat) {
             startWhatsAppChat(currentNodeObj.chatPartner);
         } else if (currentNodeObj.choices) {
-            if (currentNodeObj.effects) {
-                if (currentNodeObj.effects.energia) {
-                    applyEnergyEffect(currentNodeObj.effects.energia);
-                }
-                updateHUD();
+            if (
+                energiaLuiza < EXHAUSTION_ENERGY_THRESHOLD &&
+                energiaLuiza > 0 &&
+                exhaustionWarningShownForNode !== currentNodeKey
+            ) {
+                exhaustionWarningShownForNode = currentNodeKey;
+                showDialogText(
+                    "Luiza",
+                    "*(suspiro)* Estou tão exausta... Será que ainda tenho forças pra ser romântica?"
+                );
+                return;
             }
             showChoices(currentNodeObj.choices);
         } else if (currentNodeObj.next === 'show_goodnight_screen') {
@@ -352,12 +372,6 @@ function playNextDialog(currentNodeObj) {
         } else if (currentNodeObj.next === 'show_bad_ending_screen') {
             showBadEndingScreen();
         } else if (currentNodeObj.next) {
-            if (currentNodeObj.effects) {
-                if (currentNodeObj.effects.energia) {
-                    applyEnergyEffect(currentNodeObj.effects.energia);
-                }
-                updateHUD();
-            }
             loadNode(currentNodeObj.next);
         }
     }
@@ -569,7 +583,8 @@ function hasRequiredHearts(requirements) {
 
 function getHeartRequirementText(requirements) {
     const names = {
-        enrique: 'Enrique'
+        enrique: 'Enrique',
+        talita: 'Talita'
     };
 
     return Object.entries(requirements)
@@ -577,89 +592,185 @@ function getHeartRequirementText(requirements) {
         .join(' e ');
 }
 
+function isExpressiveChoice(choice) {
+    const effects = resolveChoiceEffects(choice);
+    if (!effects.hearts) return false;
+    return Object.values(effects.hearts).includes('muito bom');
+}
+
+function isOutdoorContext(context) {
+    return context === 'parque' || context === 'mirante';
+}
+
+function isIndoorComfortContext(context) {
+    return context === 'cinema' || context === 'cafe' || context === 'bar' || context === 'restaurante';
+}
+
+function isPhysicalContactChoice(choice) {
+    return choice.energy === 'cansativa' || choice.context === 'fisico';
+}
+
+function downgradeHeartTier(tier) {
+    const order = ['muito bom', 'bom', 'neutro', 'ruim'];
+    const index = order.indexOf(tier);
+    return index === -1 ? tier : order[Math.min(order.length - 1, index + 1)];
+}
+
+function upgradeHeartTier(tier) {
+    const order = ['ruim', 'neutro', 'bom', 'muito bom'];
+    const reverseOrder = ['muito bom', 'bom', 'neutro', 'ruim'];
+    const index = reverseOrder.indexOf(tier);
+    return index === -1 ? tier : reverseOrder[Math.max(0, index - 1)];
+}
+
+function resolveChoiceEffects(choice) {
+    let energy = choice.energy;
+    let hearts = choice.hearts ? { ...choice.hearts } : null;
+    const context = choice.context;
+
+    if (currentWeather === WeatherTypes.CHUVA) {
+        if (isOutdoorContext(context)) {
+            if (energy === 'neutra' || energy === 'tranquila') {
+                energy = 'cansativa';
+            }
+            if (hearts) {
+                Object.keys(hearts).forEach(personagem => {
+                    hearts[personagem] = downgradeHeartTier(hearts[personagem]);
+                });
+            }
+        }
+
+        if (isIndoorComfortContext(context) && hearts) {
+            Object.keys(hearts).forEach(personagem => {
+                if (hearts[personagem] !== 'ruim') {
+                    hearts[personagem] = upgradeHeartTier(hearts[personagem]);
+                }
+            });
+        }
+    }
+
+    if (hearts && isPhysicalContactChoice(choice)) {
+        if (currentWeather === WeatherTypes.FRIO) {
+            Object.keys(hearts).forEach(personagem => {
+                hearts[personagem] = upgradeHeartTier(hearts[personagem]);
+            });
+        } else if (currentWeather === WeatherTypes.SOL) {
+            Object.keys(hearts).forEach(personagem => {
+                hearts[personagem] = downgradeHeartTier(hearts[personagem]);
+            });
+        }
+    }
+
+    return { energy, hearts };
+}
+
+function meetsChoiceCondition(choice) {
+    const condition = choice.condition;
+    if (!condition) return true;
+
+    if (condition.heartsEnriqueMin !== undefined && coracoes.enrique < condition.heartsEnriqueMin) {
+        return false;
+    }
+    if (condition.heartsTalitaMin !== undefined && coracoes.talita < condition.heartsTalitaMin) {
+        return false;
+    }
+    if (condition.energyMin !== undefined && energiaLuiza < condition.energyMin) {
+        return false;
+    }
+    if (condition.visitedNode && !visitedNodes.has(condition.visitedNode)) {
+        return false;
+    }
+
+    return true;
+}
+
+function getChoiceLockState(choice) {
+    const condition = choice.condition || {};
+
+    if (condition.visitedNode && !visitedNodes.has(condition.visitedNode)) {
+        return { locked: true, hidden: true, reason: '' };
+    }
+
+    if (!meetsChoiceCondition(choice)) {
+        if (condition.heartsEnriqueMin !== undefined && coracoes.enrique < condition.heartsEnriqueMin) {
+            return { locked: true, reason: `Requer ${condition.heartsEnriqueMin} corações com Enrique` };
+        }
+        if (condition.heartsTalitaMin !== undefined && coracoes.talita < condition.heartsTalitaMin) {
+            return { locked: true, hidden: true, reason: '' };
+        }
+        if (condition.energyMin !== undefined && energiaLuiza < condition.energyMin) {
+            return { locked: true, reason: `Requer Energia >= ${condition.energyMin}%` };
+        }
+
+        return { locked: true, reason: 'Requisito não atendido' };
+    }
+
+    if (choice.reqHearts && !hasRequiredHearts(choice.reqHearts)) {
+        return { locked: true, reason: getHeartRequirementText(choice.reqHearts), hidden: true };
+    }
+
+    if (choice.reqEnergyMin !== undefined && energiaLuiza < choice.reqEnergyMin) {
+        return { locked: true, reason: `Requer Energia >= ${choice.reqEnergyMin}%` };
+    }
+
+    if (energiaLuiza < EXHAUSTION_ENERGY_THRESHOLD && isExpressiveChoice(choice)) {
+        return { locked: true, reason: 'Luiza está exausta demais para isso' };
+    }
+
+    if (choice.reqWeather && !choice.reqWeather.includes(currentWeather)) {
+        return { locked: true, reason: 'Clima inadequado' };
+    }
+
+    return { locked: false, reason: '' };
+}
+
+function applyWeatherHeartModifier(heartEffects, choice) {
+    return resolveChoiceEffects(choice).hearts || heartEffects;
+}
+
 // Exibir opções de escolha
 function showChoices(choices) {
     const container = document.getElementById('choices-container');
     container.innerHTML = '';
-    
-    // Embaralha as opções para não ficarem na mesma ordem
-    const shuffledChoices = [...choices].sort(() => Math.random() - 0.5);
-    
-    shuffledChoices.forEach(choice => {
+
+    const visibleChoices = choices.filter(choice => {
+        const lockState = getChoiceLockState(choice);
+        return !lockState.hidden;
+    });
+
+    visibleChoices.forEach(choice => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        
-        let isLocked = false;
-        let lockReason = "";
 
-        // Requisito de corações
-        if (choice.reqHearts) {
-            if (!hasRequiredHearts(choice.reqHearts)) {
-                isLocked = true;
-                lockReason = getHeartRequirementText(choice.reqHearts);
-            }
-        }
+        const lockState = getChoiceLockState(choice);
 
-        // Requisito de Energia Mínima
-        if (choice.reqEnergyMin !== undefined && energiaLuiza < choice.reqEnergyMin) {
-            isLocked = true;
-            lockReason = `Requer Energia >= ${choice.reqEnergyMin}%`;
-        }
-
-        // Requisito de Clima
-        if (choice.reqWeather && !choice.reqWeather.includes(currentWeather)) {
-            isLocked = true;
-            const weatherNames = {
-                [WeatherTypes.SOL]: 'Sol',
-                [WeatherTypes.CHUVA]: 'Chuva',
-                [WeatherTypes.FRIO]: 'Frio'
+        if (lockState.locked) {
+            btn.classList.add('locked');
+            btn.innerHTML = `
+                <span>${choice.text}</span>
+                <span class="choice-requirement"><i class="fa-solid fa-lock"></i> ${lockState.reason}</span>
+            `;
+            btn.onclick = () => {
+                btn.classList.add('shake');
+                setTimeout(() => btn.classList.remove('shake'), 400);
             };
-            lockReason = `Clima inadequado`;
-        }
-
-        if (isLocked) {
-            // Se o bloqueio for por corações, não mostra como bloqueado visualmente
-            if (choice.reqHearts && !hasRequiredHearts(choice.reqHearts)) {
-                btn.innerHTML = `
-                    <span>${choice.text}</span>
-                `;
-                btn.onclick = () => {
-                    // No Valentine's Day game, all choices should be available
-                    if (choice.hearts) {
-                        applyHeartEffects(choice.hearts);
-                    }
-                    if (choice.energy) {
-                        applyEnergyEffect(choice.energy);
-                    }
-                    updateHUD();
-                    loadNode(choice.target);
-                };
-            } else {
-                btn.classList.add('locked');
-                btn.innerHTML = `
-                    <span>${choice.text}</span>
-                    <span class="choice-requirement"><i class="fa-solid fa-lock"></i> ${lockReason}</span>
-                `;
-                btn.onclick = () => {
-                    btn.classList.add('shake');
-                    setTimeout(() => btn.classList.remove('shake'), 400);
-                };
-            }
         } else {
             btn.innerHTML = `
                 <span>${choice.text}</span>
             `;
             btn.onclick = () => {
-                if (choice.energy) {
-                    applyEnergyEffect(choice.energy);
+                const resolved = resolveChoiceEffects(choice);
+
+                if (resolved.energy) {
+                    applyEnergyEffect(resolved.energy);
                 }
-                
-                if (choice.hearts) {
-                    applyHeartEffects(choice.hearts);
+
+                if (resolved.hearts) {
+                    applyHeartEffects(resolved.hearts);
                 }
-                
+
                 updateHUD();
-                
+
                 if (choice.target === 'go_victory') {
                     showVictoryScreen();
                 } else {

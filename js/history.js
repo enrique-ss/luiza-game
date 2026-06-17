@@ -4,13 +4,27 @@ const StoryNodes = {
     inicio: {
         bg: "casa_luiza_manha",
         time: "08:00",
+        skipAmbience: true,
         dialogs: [
             { 
                 speaker: "Narrador", 
-                text: "O despertador toca às 8 da manhã. Luiza abre os olhos devagar, sentindo o calor do sol pela janela. Hoje é Dia dos Namorados."
+                text: "O despertador toca às 8 da manhã. Luiza abre os olhos devagar, sentindo o calor do sol pela janela. Hoje é Dia dos Namorados.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "O despertador toca às 8 da manhã. Luiza abre os olhos e ouve a chuva batendo na janela. Dia dos Namorados — mesmo com tempo feio, o coração dela está acelerado.",
+                    [WeatherTypes.FRIO]: "O despertador toca às 8 da manhã. Luiza abre os olhos devagar no quarto gelado. Hoje é Dia dos Namorados, e ela já imagina se apertar no Enrique para se aquecer.",
+                    [WeatherTypes.SOL]: "O despertador toca às 8 da manhã. Luiza abre os olhos devagar, sentindo o calor do sol pela janela. Hoje é Dia dos Namorados — e o céu parece conspirar a favor do romance."
+                }
             },
 
-            { speaker: "Narrador", text: "Ela se levanta da cama e vai até a janela, o coração acelerado de antecipação." },
+            { 
+                speaker: "Narrador", 
+                text: "Ela se levanta da cama e vai até a janela, o coração acelerado de antecipação.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "Ela se levanta e vê as ruas brilhando de chuva. Mesmo assim, mal pode esperar para ver o Enrique.",
+                    [WeatherTypes.FRIO]: "Ela se levanta enrolada no robe e sente o frio do chão. A antecipação aquece por dentro.",
+                    [WeatherTypes.SOL]: "Ela se levanta da cama e vai até a janela. O dia está lindo — perfeito para um encontro especial."
+                }
+            },
             
             { 
                 speaker: "Luiza", 
@@ -23,10 +37,10 @@ const StoryNodes = {
             },
         ],
         choices: [
-            { text: "Se arrumar com cuidado", target: "arrumar_cuidado", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Se arrumar rápido", target: "arrumar_rapido", energy: 'cansativa', hearts: { enrique: 'bom' } },
-            { text: "Dormir mais 10 minutos", target: "dormir_mais", energy: 'tranquila', hearts: { enrique: 'neutro' } },
-            { text: "Ficar enrolando na cama", target: "ficar_enrolando", energy: 'tranquila', hearts: { enrique: 'ruim' } }
+            { text: "Caprichar no visual para impressioná-lo de verdade", target: "arrumar_cuidado", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Me apressar para não deixá-lo esperando", target: "arrumar_rapido", energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Aproveitar mais alguns minutos de descanso", target: "dormir_mais", context: 'casa', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Ignorar o despertador e ficar de preguiça na cama", target: "ficar_enrolando", energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -75,6 +89,7 @@ const StoryNodes = {
     enrique_chega_cuidado: {
         bg: "casa_luiza_manha",
         time: "09:00",
+        effects: { hearts: { enrique: 'muito bom' } },
         dialogs: [
             { 
                 speaker: "Narrador", 
@@ -87,7 +102,7 @@ const StoryNodes = {
             }
         ],
         choices: [
-            { text: "Dar um abraço apertado e um beijo de bom dia", target: "enrique_reacao_beijo", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar um abraço apertado e um beijo de bom dia", target: "enrique_reacao_beijo", context: 'fisico', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
             { text: "Ficar vermelha e agradecer timidamente", target: "enrique_reacao_timida", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
@@ -115,6 +130,7 @@ const StoryNodes = {
     enrique_chega_rapido: {
         bg: "casa_luiza_manha",
         time: "09:00",
+        effects: { hearts: { enrique: 'bom' } },
         dialogs: [
             { 
                 speaker: "Narrador", 
@@ -128,7 +144,7 @@ const StoryNodes = {
         ],
         choices: [
             { text: "Dividir o chocolate com ele na hora", target: "enrique_rapido_chocolate", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Dar um abraço rápido de agradecimento", target: "enrique_rapido_abraco", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Dar um abraço rápido de agradecimento", target: "enrique_rapido_abraco", context: 'fisico', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -155,6 +171,7 @@ const StoryNodes = {
     enrique_chega_atrasada: {
         bg: "casa_luiza_manha",
         time: "09:00",
+        effects: { hearts: { enrique: 'bom' } },
         dialogs: [
             { 
                 speaker: "Narrador", 
@@ -167,8 +184,8 @@ const StoryNodes = {
             }
         ],
         choices: [
-            { text: "Pedir desculpas segurando a mão dele", target: "enrique_atrasada_mao", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Dizer que vai compensar o atraso com muitos beijos", target: "enrique_atrasada_compensar", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Pedir desculpas segurando a mão dele", target: "enrique_atrasada_mao", context: 'fisico', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dizer que vai compensar o atraso com muitos beijos", target: "enrique_atrasada_compensar", context: 'fisico', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -195,6 +212,7 @@ const StoryNodes = {
     enrique_chega_muito_atrasada: {
         bg: "casa_luiza_manha",
         time: "09:00",
+        effects: { hearts: { enrique: 'neutro' } },
         dialogs: [
             { 
                 speaker: "Narrador", 
@@ -242,8 +260,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Você é perfeito, Enrique... *(sorri com ternura)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Alimentar Enrique com um pedaço de bolo", target: "cafe_beijo_alimentar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Conversar sobre morar juntos no futuro", target: "cafe_beijo_futuro", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Alimentar Enrique com um pedaço de bolo", target: "cafe_beijo_alimentar", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Conversar sobre morar juntos no futuro", target: "cafe_beijo_futuro", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -274,8 +292,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles passeiam de mãos dadas pelo parque, com um clima super apaixonado." }
         ],
         choices: [
-            { text: "Dar um beijo roubado no parque", target: "parque_beijo_roubado", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Caminhar abraçadinha com ele", target: "parque_beijo_caminhar", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Dar um beijo roubado no parque", target: "parque_beijo_roubado", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar abraçadinha com ele", target: "parque_beijo_caminhar", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -302,7 +320,9 @@ const StoryNodes = {
     almoco_beijo: {
         bg: "kalzone",
         time: "12:00",
+        effects: { energia: 'tranquila' },
         dialogs: [
+            { speaker: "Narrador", text: "No táxi a caminho do restaurante, Luiza relaxa e observa a cidade passar pela janela." },
             { speaker: "Narrador", text: "Eles chegam para o almoço romântico em um restaurante com vista panorâmica. O amor entre eles é visível." },
             { speaker: "Enrique", text: "Este dia está sendo maravilhoso, amor. E só melhora com você.", chars: ["luiza", "enrique"] }
         ],
@@ -327,8 +347,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Está confortável aqui, princesa? Achei esse cantinho bem calmo pra nós.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Elogiar a escolha do lugar docemente", target: "cafe_timida_elogiar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Ficar olhando pra ele em silêncio sorrindo", target: "cafe_timida_silencio", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Elogiar a escolha do lugar docemente", target: "cafe_timida_elogiar", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ficar olhando pra ele em silêncio sorrindo", target: "cafe_timida_silencio", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -359,8 +379,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam calmamente pela praça do parque, desfrutando da calmaria da manhã." }
         ],
         choices: [
-            { text: "Segurar o dedo mindinho dele timidamente", target: "parque_timido_mindinho", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
-            { text: "Conversar sobre a natureza ao redor", target: "parque_timido_natureza", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Segurar o dedo mindinho dele timidamente", target: "parque_timido_mindinho", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Conversar sobre a natureza ao redor", target: "parque_timido_natureza", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -412,8 +432,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Hmm, esse chocolate é o meu favorito! Você acertou em cheio.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Passar um pouco de chocolate na bochecha dele brincando", target: "cafe_choco_brincar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Agradecer de boca cheia deliciando-se", target: "cafe_choco_comer", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Passar um pouco de chocolate na bochecha dele brincando", target: "cafe_choco_brincar", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Agradecer de boca cheia deliciando-se", target: "cafe_choco_comer", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -445,23 +465,44 @@ const StoryNodes = {
             { speaker: "Enrique", text: "E agora, princesa? Para onde você quer que a gente vá?", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Subir até o mirante da praça", target: "mirante_parque_chocolate", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Caminhar pela praça do parque", target: "passeio_parque_chocolate", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Ir direto para o restaurante almoçar", target: "almoco_chocolate_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
+            { text: "Subir até o mirante da praça", target: "mirante_parque_chocolate", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar pela praça do parque", target: "passeio_parque_chocolate", context: 'parque', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Ir direto para o restaurante almoçar", target: "almoco_chocolate_direto", context: 'restaurante', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Reclamar que não tem energia para sair caminhando", target: "chocolate_preguica", context: 'cafe', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
+    },
+
+    chocolate_preguica: {
+        bg: "cantina_manha",
+        time: "10:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Enrique... sinceramente, tô sem energia pra ficar andando por aí. *(cruza os braços)*", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(desvia o olhar, magoado)* Ah... entendi. Planejei tanto pra gente aproveitar o parque...", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Não é isso! É que... *(suspira)* Tô cansada. Vamos direto almoçar?", chars: ["luiza", "enrique"] }
+        ],
+        next: "almoco_chocolate_direto"
     },
 
     mirante_parque_chocolate: {
         bg: "parada_manha",
         time: "10:30",
         dialogs: [
-            { speaker: "Narrador", text: "Eles sobem os degraus até o mirante do parque. O vento fresco bate em seus rostos." },
+            { 
+                speaker: "Narrador", 
+                text: "Eles sobem os degraus até o mirante do parque. O vento fresco bate em seus rostos.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A subida fica escorregadia com a chuva, mas a vista nebulosa do mirante tem um charme único.",
+                    [WeatherTypes.FRIO]: "O vento no alto é cortante. Luiza se aproxima instintivamente do Enrique.",
+                    [WeatherTypes.SOL]: "Eles sobem os degraus até o mirante do parque. O vento fresco bate em seus rostos."
+                }
+            },
             { speaker: "Luiza", text: "Nossa, que vista maravilhosa! Valeu totalmente a subida.", chars: ["luiza", "enrique"] },
-            { speaker: "Enrique", text: "*(sorri e a abraça de lado)* Realmente incrível. Mas a paisagem mais bonita pra mim tá bem aqui.", chars: ["luiza", "enrique"] }
+            { speaker: "Enrique", text: "*(sorri e a abraça de lado)* Realmente incrível. Mas a paisagem mais bonita pra mim tá bem aqui.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Por um momento, o mundo lá embaixo desaparece. Só existem eles dois e o horizonte." }
         ],
         choices: [
-            { text: "Apoiar a cabeça no ombro dele", target: "mirante_choco_ombro", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
-            { text: "Elogiar o romantismo dele", target: "mirante_choco_elogio", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Apoiar a cabeça no ombro dele", target: "mirante_choco_ombro", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Elogiar o romantismo dele", target: "mirante_choco_elogio", context: 'mirante', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -499,11 +540,21 @@ const StoryNodes = {
         bg: "praca_manha",
         time: "10:30",
         dialogs: [
-            { speaker: "Narrador", text: "Eles passeiam rindo, dividindo o resto do chocolate pelo parque." }
+            { 
+                speaker: "Narrador", 
+                text: "Eles passeiam rindo, dividindo o resto do chocolate pelo parque.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva fina molha os ombros deles, mas o chocolate quente que compraram no caminho compensa.",
+                    [WeatherTypes.FRIO]: "O frio faz Luiza colar no braço do Enrique enquanto caminham entre as árvores.",
+                    [WeatherTypes.SOL]: "Eles passeiam rindo, dividindo o resto do chocolate pelo parque."
+                }
+            },
+            { speaker: "Enrique", text: "Esse parque é especial pra gente, né princesa? Cada canto tem uma memória.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Cada vez que a gente vem, fica ainda mais especial.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Desafiar Enrique para uma corrida até a árvore", target: "parque_choco_corrida", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Sentar no banco e falar sobre doces da infância", target: "parque_choco_banco", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Desafiar Enrique para uma corrida até a árvore", target: "parque_choco_corrida", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Sentar no banco e falar sobre doces da infância", target: "parque_choco_banco", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -553,8 +604,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles chegam animados na cafeteria aconchegante para repor as energias." }
         ],
         choices: [
-            { text: "Comer rapidamente para aproveitar mais o dia", target: "cafe_rapido_comer", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Relaxar e pedir um suco especial", target: "cafe_rapido_suco", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Comer rapidamente para aproveitar mais o dia", target: "cafe_rapido_comer", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Relaxar e pedir um suco especial", target: "cafe_rapido_suco", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -586,10 +637,22 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Para onde quer ir agora, princesa? Você escolhe!", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Subir correndo até o mirante", target: "mirante_parque_rapido", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Caminhar rápido pela praça", target: "passeio_parque_rapido", energy: 'neutra', hearts: { enrique: 'bom' } },
-            { text: "Ir logo para o restaurante", target: "almoco_rapido_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
+            { text: "Subir correndo até o mirante", target: "mirante_parque_rapido", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar rápido pela praça", target: "passeio_parque_rapido", context: 'parque', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Ir logo para o restaurante", target: "almoco_rapido_direto", context: 'restaurante', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Dizer que está exausta demais para qualquer passeio", target: "rapido_preguica", context: 'cafe', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
+    },
+
+    rapido_preguica: {
+        bg: "cantina_manha",
+        time: "10:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Enrique, meu corpo não acompanha minha animação... Tô exausta.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(franze a testa)* Poxa, amor... achei que você tava empolgada. Mas tudo bem, vamos almoçar.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique tenta esconder a decepção, mas Luiza percebe o tom mais baixo na voz dele." }
+        ],
+        next: "almoco_rapido_direto"
     },
 
     mirante_parque_rapido: {
@@ -600,8 +663,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Ufa! Subida rápida, hein? Mas olha essa vista. Vale a pena cada degrau.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Desafiar ele para ver quem grita mais alto", target: "mirante_rapido_gritar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Apostar uma corrida de descida", target: "mirante_rapido_corrida", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Desafiar ele para ver quem grita mais alto", target: "mirante_rapido_gritar", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Apostar uma corrida de descida", target: "mirante_rapido_corrida", context: 'mirante', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -643,8 +706,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam em passo acelerado, felizes com o dinamismo do dia." }
         ],
         choices: [
-            { text: "Tirar uma foto com o celular no parque", target: "parque_rapido_foto", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Observar os patos no lago", target: "parque_rapido_patos", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Tirar uma foto com o celular no parque", target: "parque_rapido_foto", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Observar os patos no lago", target: "parque_rapido_patos", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -694,8 +757,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles chegam na cafeteria e Enrique a ajuda a sentar, mantendo o tom reconfortante." }
         ],
         choices: [
-            { text: "Acariciar as mãos dele e agradecer a paciência", target: "cafe_atrasada_mao_agradecer", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Perguntar o que ele fez enquanto esperava", target: "cafe_atrasada_mao_perguntar", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Acariciar as mãos dele e agradecer a paciência", target: "cafe_atrasada_mao_agradecer", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Perguntar o que ele fez enquanto esperava", target: "cafe_atrasada_mao_perguntar", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -726,8 +789,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam em sintonia pelo parque, a leveza do perdão acalmando o clima." }
         ],
         choices: [
-            { text: "Sentar sob as sombras das árvores", target: "parque_atrasada_sombras", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
-            { text: "Tomar uma água de coco fresca juntos", target: "parque_atrasada_coco", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Sentar sob as sombras das árvores", target: "parque_atrasada_sombras", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Tomar uma água de coco fresca juntos", target: "parque_atrasada_coco", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -777,8 +840,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles se sentam para o café da manhã, a promessa de compensação ainda no ar." }
         ],
         choices: [
-            { text: "Dar um beijo estalado na bochecha dele agora", target: "cafe_compensar_beijo_agora", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Piscar pra ele de forma provocativa", target: "cafe_compensar_piscar", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Dar um beijo estalado na bochecha dele agora", target: "cafe_compensar_beijo_agora", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Piscar pra ele de forma provocativa", target: "cafe_compensar_piscar", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -810,10 +873,22 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Princesa, qual a nossa próxima parada para continuar sua compensação? *(sorri de lado)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Dar as mãos e ir para a praça", target: "passeio_parque_atrasada_compensar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Ir ao mirante para namorarmos com privacidade", target: "mirante_parque_compensar", energy: 'cansativa', hearts: { enrique: 'bom' } },
-            { text: "Ir direto para o restaurante", target: "almoco_compensar_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
+            { text: "Dar as mãos e ir para a praça", target: "passeio_parque_atrasada_compensar", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ir ao mirante para namorarmos com privacidade", target: "mirante_parque_compensar", context: 'mirante', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Ir direto para o restaurante", target: "almoco_compensar_direto", context: 'restaurante', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Dizer que a compensação pode esperar e ir almoçar logo", target: "compensar_preguica", context: 'restaurante', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
+    },
+
+    compensar_preguica: {
+        bg: "cantina_manha",
+        time: "10:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Amor, prometo compensar depois... mas agora preciso comer. Tô morrendo de fome.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(cruza os braços, decepcionado)* Eu esperei tanto tempo por você hoje, Luiza... e você quer pular a parte romântica?", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Não é pular! É... priorizar. Desculpa.", chars: ["luiza", "enrique"] }
+        ],
+        next: "almoco_compensar_direto"
     },
 
     mirante_parque_compensar: {
@@ -824,8 +899,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Aqui está tão calmo... Perfeito para continuarmos o que eu prometi.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Dar um beijo demorado e apaixonado nele", target: "mirante_compensar_beijo", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Fazer um cafuné e elogiar a beleza dele", target: "mirante_compensar_cafune", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Dar um beijo demorado e apaixonado nele", target: "mirante_compensar_beijo", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Fazer um cafuné e elogiar a beleza dele", target: "mirante_compensar_cafune", context: 'mirante', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -866,8 +941,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham animados, com Enrique ansioso pelos gestos de Luiza." }
         ],
         choices: [
-            { text: "Dar as mãos e correr rindo", target: "parque_compensar_correr", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Dar um abraço apertado por trás dele", target: "parque_compensar_por_tras", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Dar as mãos e correr rindo", target: "parque_compensar_correr", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar um abraço apertado por trás dele", target: "parque_compensar_por_tras", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -917,8 +992,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Na cafeteria, eles escolhem uma mesa calma após o abraço aliviado na chegada." }
         ],
         choices: [
-            { text: "Insistir para pagar a conta do café", target: "cafe_muito_forte_pagar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Dar as mãos e fazer um carinho suave", target: "cafe_muito_forte_carinho", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Insistir para pagar a conta do café", target: "cafe_muito_forte_pagar", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar as mãos e fazer um carinho suave", target: "cafe_muito_forte_carinho", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -949,8 +1024,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham com calma, curtindo o final da manhã sob o sol." }
         ],
         choices: [
-            { text: "Comprar um sorvete e dividir", target: "parque_forte_sorvete", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Descansar debaixo de uma árvore conversando", target: "parque_forte_descanso", energy: 'tranquila', hearts: { enrique: 'bom' } }
+            { text: "Comprar um sorvete e dividir", target: "parque_forte_sorvete", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Descansar debaixo de uma árvore conversando", target: "parque_forte_descanso", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1000,8 +1075,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "A cafeteria está animada. O clima é descontraído e cheio de boas risadas." }
         ],
         choices: [
-            { text: "Fazer piada com a pressa para se arrumar", target: "cafe_muito_rir_pressa", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Pedir um pão de queijo gigante", target: "cafe_muito_rir_gigante", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Fazer piada com a pressa para se arrumar", target: "cafe_muito_rir_pressa", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Pedir um pão de queijo gigante", target: "cafe_muito_rir_gigante", context: 'cafe', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1033,10 +1108,22 @@ const StoryNodes = {
             { speaker: "Enrique", text: "E agora, Luiza? Onde vamos descarregar toda essa sua energia de sono acumulado? *(ri)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Ir brincar na praça do parque", target: "passeio_parque_muito_rir", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Ir rir da vista alta no mirante", target: "mirante_parque_rir", energy: 'cansativa', hearts: { enrique: 'bom' } },
-            { text: "Ir comer mais no restaurante direto", target: "almoco_rir_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
+            { text: "Ir brincar na praça do parque", target: "passeio_parque_muito_rir", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ir rir da vista alta no mirante", target: "mirante_parque_rir", context: 'mirante', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Ir comer mais no restaurante direto", target: "almoco_rir_direto", context: 'restaurante', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Reclamar que o dia já foi longo demais", target: "rir_preguica", context: 'cafe', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
+    },
+
+    rir_preguica: {
+        bg: "cantina_manha",
+        time: "10:15",
+        dialogs: [
+            { speaker: "Luiza", text: "Enrique, já deu pra hoje de manhã. Tô exausta de rir e de correr atrás do relógio.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(suspira, visivelmente frustrado)* Achei que a gente ia aproveitar mais... mas se você tá cansada, vamos almoçar.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "O sorriso do Enrique some por um instante. Luiza sente que decepcionou ele sem querer." }
+        ],
+        next: "almoco_rir_direto"
     },
 
     mirante_parque_rir: {
@@ -1047,8 +1134,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Olha as casinhas lá embaixo parecendo formigas! *(ri)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Fazer cócegas nele de repente", target: "mirante_rir_cocegas", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Fazer uma pose engraçada para foto", target: "mirante_rir_pose", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Fazer cócegas nele de repente", target: "mirante_rir_cocegas", context: 'mirante', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Fazer uma pose engraçada para foto", target: "mirante_rir_pose", context: 'mirante', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1089,8 +1176,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham alegremente, brincando sobre como Luiza gosta de dormir." }
         ],
         choices: [
-            { text: "Imitar as pessoas andando no parque para fazer Enrique rir", target: "parque_rir_imitar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Cantar uma música engraçada juntos", target: "parque_rir_cantar", energy: 'neutra', hearts: { enrique: 'bom' } }
+            { text: "Imitar as pessoas andando no parque para fazer Enrique rir", target: "parque_rir_imitar", context: 'parque', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Cantar uma música engraçada juntos", target: "parque_rir_cantar", context: 'parque', energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1139,14 +1226,31 @@ const StoryNodes = {
         bg: "centro_tarde",
         time: "13:15",
         dialogs: [
-            { speaker: "Narrador", text: "A tarde começa com o sol a pino. Enrique tem várias opções pra o passeio da tarde." },
-            { speaker: "Enrique", text: "Pra tarde, pensei em algumas coisas que a gente pode fazer. Qual você prefere?", chars: ["luiza", "enrique"] }
+            { 
+                speaker: "Narrador", 
+                text: "A tarde começa com o sol a pino. Enrique tem várias opções pra o passeio da tarde.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva da tarde transformou o centro num cenário melancólico e bonito. Enrique protege Luiza com o guarda-chuva.",
+                    [WeatherTypes.FRIO]: "O vento frio da tarde faz Luiza se aconchegar no braço do Enrique enquanto caminham.",
+                    [WeatherTypes.SOL]: "A tarde começa com o sol a pino. Enrique tem várias opções pra o passeio da tarde."
+                }
+            },
+            { 
+                speaker: "Enrique", 
+                text: "Pra tarde, pensei em algumas coisas que a gente pode fazer. Qual você prefere?", 
+                chars: ["luiza", "enrique"],
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "Com essa chuva, pensei em lugares mais aconchegantes. O que você acha, princesa?",
+                    [WeatherTypes.FRIO]: "Tá frio, mas a gente pode se aquecer juntos. Tenho algumas ideias pra tarde.",
+                    [WeatherTypes.SOL]: "Pra tarde, pensei em algumas coisas que a gente pode fazer. Qual você prefere?"
+                }
+            }
         ],
         choices: [
-            { text: "Workshop de pintura", target: "pintura_tarde", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Ir ao cinema", target: "cinema_tarde", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Visitar museu de arte", target: "museu_tarde", energy: 'tranquila', hearts: { enrique: 'neutro' } },
-            { text: "Procurar a Talita", target: "encontro_talita", energy: 'cansativa', hearts: { enrique: 'ruim' } }
+            { text: "Mergulhar numa tarde criativa pintando ao lado dele", target: "pintura_tarde", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Querer um lugar aconchegante para assistir filme juntos", target: "cinema_tarde", context: 'cinema', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Caminhar devagar admirando as obras com calma", target: "museu_tarde", energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Priorizar encontrar a melhor amiga em vez do passeio a dois", target: "encontro_talita", energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1154,10 +1258,20 @@ const StoryNodes = {
         bg: "centro_tarde",
         time: "14:00",
         dialogs: [
-            { speaker: "Narrador", text: "Enrique leva Luiza ao cinema. Eles compram pipoca e escolhem bons lugares." },
+            { 
+                speaker: "Narrador", 
+                text: "Enrique leva Luiza ao cinema. Eles compram pipoca e escolhem bons lugares.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva lá fora só reforça a escolha: dentro do cinema, o mundo fica longe e o calor do refúgio é perfeito.",
+                    [WeatherTypes.FRIO]: "O frio da rua contrasta com o calor aconchegante da sala de cinema.",
+                    [WeatherTypes.SOL]: "Mesmo com sol lá fora, a escuridão do cinema cria um mundo só deles."
+                }
+            },
             { speaker: "Enrique", text: "Lembrei que você queria ver esse filme, princesa. Comprei pipoca grande pra nós e chocolate.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você é incrível, Enrique! Se lembra de tudo.", chars: ["luiza", "enrique"] },
-            { speaker: "Narrador", text: "Durante o filme, Enrique segura a mão de Luiza. Eles riem juntos das cenas engraçadas e se emocionam nos momentos dramáticos." }
+            { speaker: "Narrador", text: "Durante o filme, Enrique segura a mão de Luiza. Eles riem juntos das cenas engraçadas e se emocionam nos momentos dramáticos." },
+            { speaker: "Luiza", text: "*(sussurra)* Esse filme é lindo... mas estar com você é melhor que qualquer cena.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(sussurra de volta)* Concordo totalmente, princesa.", chars: ["luiza", "enrique"] }
         ],
         next: "pos_cinema"
     },
@@ -1172,10 +1286,10 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Bora dar um rolê antes do jantar? Ainda dá tempo.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Ir à livraria", target: "livraria", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
-            { text: "Voltar pro parque", target: "volta_parque", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Olhar vitrines no centro", target: "passeio_centro", energy: 'cansativa', hearts: { enrique: 'neutro' } },
-            { text: "Ir direto pra casa", target: "ir_casa_cansada", energy: 'tranquila', hearts: { enrique: 'ruim' } }
+            { text: "Compartilhar o amor por livros em um cantinho tranquilo", target: "livraria", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Querer reviver a magia do parque ao entardecer", target: "volta_parque", context: 'parque', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Observar a cidade passando pelas vitrines", target: "passeio_centro", context: 'parque', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Encerrar o dia cedo porque o corpo não aguenta mais", target: "ir_casa_cansada", context: 'casa', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1183,10 +1297,19 @@ const StoryNodes = {
         bg: "praca_tarde",
         time: "14:00",
         dialogs: [
-            { speaker: "Narrador", text: "Enrique leva Luiza pra um workshop de pintura ao ar livre. O local está cheio de telas e cores vibrantes." },
+            { 
+                speaker: "Narrador", 
+                text: "Enrique leva Luiza pra um workshop de pintura ao ar livre. O local está cheio de telas e cores vibrantes.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva começa a cair, e o organizador move o workshop para uma tenda. O clima aconchegante inspira cores mais suaves.",
+                    [WeatherTypes.FRIO]: "O frio faz Luiza tremer levemente, mas o calor da tinta nas mãos e o sorriso do Enrique aquecem.",
+                    [WeatherTypes.SOL]: "O sol da tarde ilumina as telas com cores vivas. O ar cheira a tinta e verão."
+                }
+            },
             { speaker: "Enrique", text: "Lembrei que você curte arte, princesa. Bora pintar algo? Nunca fiz isso, mas topo tentar com você.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Isso é tão criativo! Vamos se divertir muito. E não se preocupe, a gente aprende juntos.", chars: ["luiza", "enrique"] },
-            { speaker: "Narrador", text: "Eles passam a tarde pintando, rindo dos erros e se ajudando. Enrique pinta com dedicação, mesmo sem experiência." }
+            { speaker: "Narrador", text: "Eles passam a tarde pintando, rindo dos erros e se ajudando. Enrique pinta com dedicação, mesmo sem experiência." },
+            { speaker: "Luiza", text: "*(olha a tela dele)* Nossa, Enrique... você tem mais talento do que imagina.", chars: ["luiza", "enrique"] }
         ],
         next: "pos_pintura"
     },
@@ -1243,11 +1366,20 @@ const StoryNodes = {
         bg: "centro_tarde",
         time: "16:30",
         dialogs: [
-            { speaker: "Narrador", text: "Eles entram numa livraria aconchegante. O cheiro de livros velhos e novos enche o ar." },
+            { 
+                speaker: "Narrador", 
+                text: "Eles entram numa livraria aconchegante. O cheiro de livros velhos e novos enche o ar.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva lá fora faz a livraria parecer ainda mais aconchegante — um refúgio literário perfeito.",
+                    [WeatherTypes.FRIO]: "O calor da livraria contrasta com o frio da rua. Luiza quer ficar horas entre as estantes.",
+                    [WeatherTypes.SOL]: "Mesmo com sol lá fora, a livraria tem sua própria luz dourada e silenciosa."
+                }
+            },
             { speaker: "Enrique", text: "Você curte ler, né princesa? Qual foi o último livro que você leu?", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Gosto muito. O último foi... *(pensa)* Um romance sobre tempo e memória. Me fez pensar sobre a gente.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Sobre a gente? De que jeito, amor?", chars: ["luiza", "enrique"] },
-            { speaker: "Luiza", text: "Sobre como cada momento conta. Como eu quero guardar todos os nossos momentos juntos.", chars: ["luiza", "enrique"] }
+            { speaker: "Luiza", text: "Sobre como cada momento conta. Como eu quero guardar todos os nossos momentos juntos.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique segura a mão dela entre as estantes. Por um instante, parecem personagens de um romance." }
         ],
         next: "fim_ato2"
     },
@@ -1256,10 +1388,12 @@ const StoryNodes = {
         bg: "centro_tarde",
         time: "16:30",
         dialogs: [
-            { speaker: "Narrador", text: "Luiza diz que tá muito cansada e quer ir pra casa. Enrique parece preocupado, mas entende." },
-            { speaker: "Enrique", text: "Tá tudo bem, amor? Se você tá cansada, bora pra casa. Sem grilo.", chars: ["luiza", "enrique"] },
-            { speaker: "Luiza", text: "É... só tô exausta. Desculpa por estragar o passeio.", chars: ["luiza", "enrique"] },
-            { speaker: "Enrique", text: "Relaxa, princesa. Seu descanso é mais importante. Bora pra casa.", chars: ["luiza", "enrique"] }
+            { speaker: "Narrador", text: "Luiza para no meio da calçada e admite que não aguenta mais." },
+            { speaker: "Luiza", text: "Enrique... eu tô exausta. Meu corpo pede pra ir pra casa.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(franze a testa, preocupado e decepcionado)* Sério? Planejei tanto pra tarde... Mas se você precisa descansar, eu entendo.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Desculpa estragar o passeio... Não foi minha intenção.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(suspira)* Tudo bem, princesa. Seu bem-estar vem primeiro. Vamos.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Enrique segura a mão dela, mas o silêncio no caminho de volta diz mais que as palavras." }
         ],
         next: "fim_ato2"
     },
@@ -1295,10 +1429,10 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Talita, deixa o Enrique respirar! *(ri)* Mas conte tudo depois, quero saber!", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Convidar a Talita", target: "talita_convite", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Convidar a Talita", target: "talita_convite", energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
             { text: "Conversar um pouco", target: "talita_conversa_rapida", energy: 'neutra', hearts: { talita: 'bom' } },
-            { text: "Ir embora rápido", target: "talita_ir_embora", energy: 'neutra', hearts: { talita: 'neutro' } },
-            { text: "Fingir que não a viu", target: "talita_ignorar", energy: 'tranquila', hearts: { talita: 'ruim' } }
+            { text: "Ir embora rápido", target: "talita_ir_embora", energy: 'tranquila', hearts: { talita: 'neutro' } },
+            { text: "Fingir que não a viu", target: "talita_ignorar", energy: 'neutra', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1329,10 +1463,10 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Talita, deixa o Enrique em paz! *(ri)* Mas é bom ver vocês conversando.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Ir na livraria", target: "talita_livraria", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Tomar café na cafeteria", target: "talita_cafe", energy: 'neutra', hearts: { talita: 'bom' } },
-            { text: "Caminhar pelo centro", target: "talita_centro", energy: 'cansativa', hearts: { talita: 'neutro' } },
-            { text: "Sugerir que a Talita vá embora", target: "talita_despedida", energy: 'tranquila', hearts: { talita: 'ruim' } }
+            { text: "Ir na livraria", target: "talita_livraria", energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Tomar café na cafeteria", target: "talita_cafe", context: 'cafe', energy: 'neutra', hearts: { talita: 'bom' } },
+            { text: "Caminhar pelo centro", target: "talita_centro", energy: 'tranquila', hearts: { talita: 'neutro' } },
+            { text: "Sugerir que a Talita vá embora", target: "talita_despedida", energy: 'neutra', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1394,8 +1528,8 @@ const StoryNodes = {
             { speaker: "Talita", text: "VOCÊ VAI AMAR! E DEPOIS A GENTE PODE DISCUTIR SOBRE OS SHIPS! EU TENHO TANTAS TEORIAS! MAS SÉRIO, LUIZA, VOCÊ DEVERIA LER TAMBÉM, AINDA QUE VOCÊ SÓ FIQUE LENDO AQUELES ROMANCES CHATOS!", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Comprar um dos mangás recomendados por ela", target: "talita_livraria_manga", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Defender seus romances clássicos com carinho", target: "talita_livraria_defesa", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Comprar um dos mangás recomendados por ela", target: "talita_livraria_manga", energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Defender seus romances clássicos com carinho", target: "talita_livraria_defesa", context: 'fisico', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1431,8 +1565,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Talita, para de flertar com todo mundo! *(ri)* Mas o café realmente parece bom.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Pagar o café e o pão de queijo da Talita", target: "talita_cafe_pagar", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Sugerir dividir a conta com ela", target: "talita_cafe_dividir", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Pagar o café e o pão de queijo da Talita", target: "talita_cafe_pagar", context: 'cafe', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Sugerir dividir a conta com ela", target: "talita_cafe_dividir", context: 'cafe', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1467,8 +1601,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Putz... que mancada.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Rir e se divertir com as histórias escandalosas dela", target: "talita_centro_rir", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Pedir discretamente para ela falar um pouco mais baixo", target: "talita_centro_baixo", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Rir e se divertir com as histórias escandalosas dela", target: "talita_centro_rir", energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Pedir discretamente para ela falar um pouco mais baixo", target: "talita_centro_baixo", energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1502,8 +1636,8 @@ const StoryNodes = {
             { speaker: "Talita", text: "GENTE, PRECISO VOAR! SE EU ATRASAR MINHA MÃE ME TRANCA NO QUARTO! MAS FOI MARAVILHOSO! ME MANDEM WHATSAPP!", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Dar um abraço de urso bem apertado nela", target: "talita_despedida_abraco", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Dar um tchauzinho carinhoso", target: "talita_despedida_tchau", energy: 'tranquila', hearts: { talita: 'bom' } }
+            { text: "Dar um abraço de urso bem apertado nela", target: "talita_despedida_abraco", context: 'fisico', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Dar um tchauzinho carinhoso", target: "talita_despedida_tchau", context: 'fisico', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1550,24 +1684,30 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "A noite começa a cair. Enrique sugere um passeio noturno antes do jantar.", weatherDialogs: {
                 [WeatherTypes.SOL]: "O céu fica laranja e roxo com o pôr do sol. Uma noite perfeita se aproxima.",
+                [WeatherTypes.CHUVA]: "A chuva fina da noite transforma as luzes da cidade em reflexos dourados. Romântico, mas molhado.",
                 [WeatherTypes.FRIO]: "O frio da noite começa a aparecer. Enrique se oferece pra emprestar o casaco."
             }},
             { speaker: "Enrique", text: "Antes do jantar, quer fazer um passeio noturno? A cidade fica linda à noite.", chars: ["luiza", "enrique"], weatherDialogs: {
+                [WeatherTypes.CHUVA]: "Tá chovendo, mas a cidade fica linda assim. Se preferir, a gente pode ir direto pra algum lugar quentinho.",
                 [WeatherTypes.FRIO]: "Antes do jantar, quer fazer um passeio? Tá ficando frio, mas se você quiser, posso emprestar meu casaco."
             }},
-            { speaker: "Luiza", text: "Adoro a cidade à noite! Vamos sim.", chars: ["luiza", "enrique"] }
+            { speaker: "Luiza", text: "Adoro a cidade à noite! Vamos sim.", chars: ["luiza", "enrique"], weatherDialogs: {
+                [WeatherTypes.CHUVA]: "Com chuva ou sem, estar com você já é o suficiente pra mim.",
+                [WeatherTypes.FRIO]: "Com você por perto, até o frio fica bonito."
+            }}
         ],
         choices: [
-            { text: "Subir ao mirante", target: "mirante_noite", energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { enrique: 'muito bom' } },
-            { text: "Caminhar pelo parque", target: "parque_noite", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Passear pelo centro", target: "passeio_noturno", energy: 'cansativa', hearts: { enrique: 'neutro' } },
-            { text: "Chamar a Talita", target: "talita_noite", energy: 'cansativa', reqHearts: { talita: 3 }, hearts: { enrique: 'ruim' } }
+            { text: "Subir ao mirante para ver a cidade iluminada juntos", target: "mirante_noite", context: 'mirante', energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { enrique: 'muito bom' } },
+            { text: "Passear de mãos dadas pelo parque à noite", target: "parque_noite", context: 'parque', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Caminhar pelas ruas iluminadas do centro", target: "passeio_noturno", context: 'parque', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Chamar a Talita", target: "talita_noite", energy: 'neutra', condition: { heartsTalitaMin: 3 }, hearts: { enrique: 'ruim', talita: 'muito bom' } }
         ]
     },
 
     passeio_noturno: {
         bg: "centro_noite",
         time: "19:00",
+        effects: { energia: 'tranquila' },
         dialogs: [
             { speaker: "Narrador", text: "As luzes do centro acendem, criando uma atmosfera mágica. Eles caminham de mãos dadas." },
             { speaker: "Enrique", text: "A cidade à noite fica bonita demais. Fica ainda melhor com você do lado, amor.", chars: ["luiza", "enrique"] },
@@ -1580,6 +1720,7 @@ const StoryNodes = {
     mirante_noite: {
         bg: "parada_noite",
         time: "19:00",
+        effects: { energia: 'tranquila' },
         dialogs: [
             { speaker: "Narrador", text: "Eles sobem ao mirante. As luzes da cidade se espalham como um tapete de estrelas." },
             { speaker: "Enrique", text: "Vista muito bonita, amor. Mas ficar aqui do seu lado é bem melhor.", chars: ["luiza", "enrique"] },
@@ -1592,11 +1733,22 @@ const StoryNodes = {
     parque_noite: {
         bg: "praca_noite",
         time: "19:00",
+        effects: { energia: 'tranquila' },
         dialogs: [
-            { speaker: "Narrador", text: "O parque à noite é silencioso e pacífico. Alguns postes iluminam o caminho." },
+            { 
+                speaker: "Narrador", 
+                text: "O parque à noite é silencioso e pacífico. Alguns postes iluminam o caminho.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva fina cai sobre as folhas. O parque à noite fica ainda mais íntimo e silencioso.",
+                    [WeatherTypes.FRIO]: "O frio faz cada passo parecer mais lento, mais deliberado — como se o tempo tivesse desacelerado para eles.",
+                    [WeatherTypes.SOL]: "O parque à noite é silencioso e pacífico. Alguns postes iluminam o caminho."
+                }
+            },
             { speaker: "Enrique", text: "O parque à noite é bem sossegado, amor. Lembra quando a gente veio aqui a primeira vez?", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Lembro! Foi quando você me disse que gostava de mim pela primeira vez.", chars: ["luiza", "enrique"] },
-            { speaker: "Enrique", text: "Tava nervoso demais pra falar que gostava de você, princesa. Mas foi a melhor coisa que fiz.", chars: ["luiza", "enrique"] }
+            { speaker: "Enrique", text: "Tava nervoso demais pra falar que gostava de você, princesa. Mas foi a melhor coisa que fiz.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles param num banco antigo. O mesmo onde tudo começou." },
+            { speaker: "Luiza", text: "*(sussurra)* Se eu pudesse voltar no tempo, escolheria esse momento mil vezes.", chars: ["luiza", "enrique"] }
         ],
         next: "jantar_noturno"
     },
@@ -1617,10 +1769,10 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Isso... soa intenso. Mas... obrigado.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Subir ao mirante com Talita", target: "talita_mirante_noite", energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { talita: 'muito bom' } },
-            { text: "Caminhar pelo parque com Talita", target: "talita_parque_noite", energy: 'cansativa', hearts: { talita: 'bom' } },
-            { text: "Passear pelo centro com Talita", target: "talita_passeio_noturno", energy: 'neutra', hearts: { talita: 'neutro' } },
-            { text: "Pedir pra Talita ir embora", target: "talita_jantar", energy: 'tranquila', hearts: { talita: 'ruim' } }
+            { text: "Subir ao mirante com Talita", target: "talita_mirante_noite", energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Caminhar pelo parque com Talita", target: "talita_parque_noite", context: 'parque', energy: 'neutra', hearts: { talita: 'bom' } },
+            { text: "Passear pelo centro com Talita", target: "talita_passeio_noturno", context: 'parque', energy: 'tranquila', hearts: { talita: 'neutro' } },
+            { text: "Pedir pra Talita ir embora", target: "talita_jantar", context: 'restaurante', energy: 'neutra', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1632,8 +1784,8 @@ const StoryNodes = {
             { speaker: "Talita", text: "A CIDADE À NOITE É TÃO LINDA! TÃO ROMÂNTICA! MAS EU SÓ TENHO DATE RUIM, GENTE! MEUS DATES PARECEM FILTRADOS DO PIOR JEITO!", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Fazer uma pose dramática de ninja para confortá-la", target: "talita_passeio_pose", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Rir e brincar sobre a má sorte dela nos dates", target: "talita_passeio_rir", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Fazer uma pose dramática de ninja para confortá-la", target: "talita_passeio_pose", context: 'parque', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Rir e brincar sobre a má sorte dela nos dates", target: "talita_passeio_rir", context: 'parque', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1669,8 +1821,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Talita, tudo se resume a Naruto com você, né? *(ri)*", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Tirar uma selfie engraçada com a Talita", target: "talita_mirante_selfie", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Admirar a vista noturna abraçando a amiga", target: "talita_mirante_vista", energy: 'tranquila', hearts: { talita: 'bom' } }
+            { text: "Tirar uma selfie engraçada com a Talita", target: "talita_mirante_selfie", context: 'mirante', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Admirar a vista noturna abraçando a amiga", target: "talita_mirante_vista", context: 'mirante', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1705,8 +1857,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "É, a temperatura caiu bastante à noite.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Sugerir dividir um chocolate quente para aquecer", target: "talita_parque_chocolate", energy: 'tranquila', hearts: { talita: 'muito bom' } },
-            { text: "Caminhar sob as árvores ouvindo as teorias dela", target: "talita_parque_caminhar", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Sugerir dividir um chocolate quente para aquecer", target: "talita_parque_chocolate", context: 'parque', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Caminhar sob as árvores ouvindo as teorias dela", target: "talita_parque_caminhar", context: 'parque', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1741,8 +1893,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Valeu. A Luiza é tudo pra mim mesmo.", chars: ["luiza", "talita"] }
         ],
         choices: [
-            { text: "Dizer que a Talita é a melhor amiga do mundo e abraçá-la", target: "talita_jantar_melhor_amiga", energy: 'cansativa', hearts: { talita: 'muito bom' } },
-            { text: "Brincar sobre a obsessão hilária dela por Naruto e Sasuke", target: "talita_jantar_obsessao", energy: 'neutra', hearts: { talita: 'bom' } }
+            { text: "Dizer que a Talita é a melhor amiga do mundo e abraçá-la", target: "talita_jantar_melhor_amiga", context: 'restaurante', energy: 'cansativa', hearts: { talita: 'muito bom', enrique: 'neutro' } },
+            { text: "Brincar sobre a obsessão hilária dela por Naruto e Sasuke", target: "talita_jantar_obsessao", context: 'restaurante', energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1772,20 +1924,67 @@ const StoryNodes = {
 
     jantar_noturno: {
         bg: "oponente_bar_jantar",
-        time: "20:00",
+        time: "21:00",
+        effects: { energia: 'neutra' },
         dialogs: [
-            { speaker: "Narrador", text: "Enrique reserva uma mesa num restaurante elegante com luz suave e música ambiente." },
-            { speaker: "Enrique", text: "Queria te trazer aqui, amor. A comida é boa e o lugar é tranquilo.", chars: ["luiza", "enrique"] },
-            { speaker: "Luiza", text: "Tá lindo, Enrique! Você realmente pensou em cada detalhe.", chars: ["luiza", "enrique"] },
-            { speaker: "Enrique", text: "Quero que nossa noite seja da hora, princesa. Você merece.", chars: ["luiza", "enrique"] },
-            { speaker: "Narrador", text: "Eles jantam conversando sobre o dia, seus sentimentos e o quanto se amam." }
+            { speaker: "Enrique", text: "Esse dia foi incrível, Luiza. Eu não queria que acabasse nunca.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Fazer declaração de amor", target: "declaracao_especial", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Agradecer por tudo", target: "agradecimento", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Ficar em silêncio", target: "ficar_silencio", energy: 'tranquila', hearts: { enrique: 'neutro' } },
-            { text: "Reclamar da comida", target: "reclamar_comida", energy: 'neutra', hearts: { enrique: 'ruim' } }
+            {
+                text: "Dizer que ele é o amor da sua vida",
+                target: "declaracao_especial",
+                energy: 'cansativa',
+                hearts: { enrique: 'muito bom' },
+                condition: { heartsEnriqueMin: 8 }
+            },
+            {
+                text: "Segurar a mão dele por cima da mesa",
+                target: "agradecimento",
+                energy: 'tranquila',
+                hearts: { enrique: 'bom' }
+            },
+            {
+                text: "Falar sobre os planos para a próxima semana",
+                target: "falar_futuro",
+                energy: 'neutra',
+                hearts: { enrique: 'neutro' }
+            },
+            {
+                text: "Bocejar e perguntar da conta",
+                target: "reclamar_comida",
+                energy: 'tranquila',
+                hearts: { enrique: 'ruim' }
+            },
+            {
+                text: "Falar sobre o livro que compramos",
+                target: "falar_livro",
+                energy: 'neutra',
+                hearts: { enrique: 'bom' },
+                condition: { visitedNode: 'livraria' }
+            }
         ]
+    },
+
+    falar_futuro: {
+        bg: "oponente_bar_jantar",
+        time: "21:00",
+        dialogs: [
+            { speaker: "Luiza", text: "Enrique, já pensou no que a gente pode fazer na próxima semana? Tenho tantas ideias...", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(sorri)* Com você, qualquer plano vira algo especial. Me conta o que você tá pensando.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Queria voltar na livraria, talvez... ou só ficar em casa assistindo filme. O importante é estar com você.", chars: ["luiza", "enrique"] }
+        ],
+        next: "fim_ato3"
+    },
+
+    falar_livro: {
+        bg: "oponente_bar_jantar",
+        time: "21:00",
+        dialogs: [
+            { speaker: "Luiza", text: "Lembra do livro que a gente viu na livraria? Ainda penso naquela história sobre tempo e memória.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "Lembro sim, princesa. Você ficou tão emocionada falando sobre guardar nossos momentos.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "É que cada página me lembra de você. Hoje só confirmou o que o livro já dizia.", chars: ["luiza", "enrique"] }
+        ],
+        next: "fim_ato3"
     },
 
     declaracao_especial: {
@@ -1801,9 +2000,9 @@ const StoryNodes = {
 
     reclamar_comida: {
         bg: "oponente_bar_jantar",
-        time: "20:30",
+        time: "21:00",
         dialogs: [
-            { speaker: "Luiza", text: "Nossa, achei que a comida viria mais quente. E o atendimento está super demorado hoje, esperava mais desse lugar.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "*(boceja)* Enrique... a comida tá demorando e eu tô exausta. Será que já podemos pedir a conta?", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Putz, sério amor? Pensei que era muito bom pelas notas... Desculpa pelo erro na escolha.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Enrique desvia o olhar, parecendo extremamente decepcionado consigo mesmo por ter frustrado a Luiza." }
         ],
@@ -1823,9 +2022,9 @@ const StoryNodes = {
 
     agradecimento: {
         bg: "oponente_bar_jantar",
-        time: "20:30",
+        time: "21:00",
         dialogs: [
-            { speaker: "Luiza", text: "Enrique, obrigada por hoje. Por cada detalhe, por cada pensamento, por me fazer sentir tão amada. Não tenho palavras.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "*(segura a mão dele por cima da mesa)* Obrigada por hoje, Enrique. Cada detalhe, cada olhar... você me fez sentir tão amada.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Não precisa agradecer, Luiza. Fazer você feliz é a maior recompensa. Ver você sorrindo é tudo que eu preciso.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você é único, Enrique. Nunca conheci alguém com um coração tão grande.", chars: ["luiza", "enrique"] }
         ],
@@ -1862,14 +2061,23 @@ const StoryNodes = {
         bg: "centro_noite",
         time: "22:15",
         dialogs: [
-            { speaker: "Narrador", text: "Já é tarde da noite, mas a energia ainda tá alta. Enrique oferece opções pra finalizar o Dia dos Namorados." },
-            { speaker: "Enrique", text: "Pra finalizar nosso Dia dos Namorados, temos algumas opções. O que você prefere?", chars: ["luiza", "enrique"] }
+            { 
+                speaker: "Narrador", 
+                text: "Já é tarde da noite, mas a energia ainda tá alta. Enrique oferece opções pra finalizar o Dia dos Namorados.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva da madrugada cai fina. Lugares fechados parecem ainda mais convidativos.",
+                    [WeatherTypes.FRIO]: "O frio da madrugada se instala. Qualquer lugar quente parece o destino perfeito.",
+                    [WeatherTypes.SOL]: "Já é tarde da noite, mas a energia ainda tá alta. Enrique oferece opções pra finalizar o Dia dos Namorados."
+                }
+            },
+            { speaker: "Enrique", text: "Pra finalizar nosso Dia dos Namorados, temos algumas opções. O que você prefere?", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "*(sorri)* Surpreenda-me mais uma vez, Enrique.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Ir a um barzinho", target: "barzinho", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Ver filme no cinema", target: "filme_noite", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Ir para uma balada", target: "festa_noite", energy: 'cansativa', hearts: { enrique: 'neutro' } },
-            { text: "Ir direto pra casa", target: "casa_final", energy: 'tranquila', hearts: { enrique: 'ruim' } }
+            { text: "Prolongar a noite num bar intimista conversando a sós", target: "barzinho", context: 'cafe', energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Terminar o dia num cinema quentinho e confortável", target: "filme_noite", context: 'cinema', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Curtir a energia da noite numa festa animada", target: "festa_noite", context: 'bar', energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Encerrar o dia cedo porque o corpo não aguenta mais", target: "casa_final", context: 'casa', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1878,9 +2086,46 @@ const StoryNodes = {
         time: "22:30",
         dialogs: [
             { speaker: "Narrador", text: "Eles chegam numa festa animada. A música tá alta, as pessoas dançam, a energia é contagiante." },
-            { speaker: "Enrique", text: "A festa tá animada! Quer dançar? Eu... eu não sou muito bom, mas com você posso tentar.", chars: ["luiza", "enrique"] },
-            { speaker: "Luiza", text: "Claro! Vamos nos divertir! Não importa se dança bem ou não, o importante é se divertir juntos.", chars: ["luiza", "enrique"] },
-            { speaker: "Narrador", text: "Eles dançam juntos, rindo dos movimentos desajeitados de Enrique. A noite fica ainda mais especial." }
+            { speaker: "Enrique", text: "A festa tá animada! O que você quer fazer aqui, princesa?", chars: ["luiza", "enrique"] }
+        ],
+        choices: [
+            {
+                text: "Dançar a noite toda agarrada nele",
+                target: "festa_dancar",
+                context: 'bar',
+                energy: 'cansativa',
+                hearts: { enrique: 'muito bom' },
+                condition: { energyMin: 31 }
+            },
+            {
+                text: "Ficar num canto conversando no meio da música",
+                target: "festa_conversar",
+                context: 'bar',
+                energy: 'tranquila',
+                hearts: { enrique: 'bom' }
+            }
+        ]
+    },
+
+    festa_dancar: {
+        bg: "tributo_festa",
+        time: "23:00",
+        dialogs: [
+            { speaker: "Luiza", text: "Vem! Vamos dançar até não aguentar mais! *(puxa ele para a pista)*", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(ri dos próprios passos)* Eu avisei que não sei dançar, princesa!", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Eles dançam juntos, rindo dos movimentos desajeitados de Enrique. A noite fica ainda mais especial." },
+            { speaker: "Luiza", text: "Não importa se dança bem. O importante é estar aqui com você.", chars: ["luiza", "enrique"] }
+        ],
+        next: "pos_festa"
+    },
+
+    festa_conversar: {
+        bg: "tributo_festa",
+        time: "23:00",
+        dialogs: [
+            { speaker: "Luiza", text: "Vem, vamos ficar aqui no canto. Quero ouvir sua voz sem gritar por cima da música.", chars: ["luiza", "enrique"] },
+            { speaker: "Enrique", text: "*(sorri aliviado)* Adorei essa ideia. A música é boa, mas conversar com você é melhor.", chars: ["luiza", "enrique"] },
+            { speaker: "Narrador", text: "Mesmo com o barulho ao redor, eles criam uma bolha de intimidade só deles." }
         ],
         next: "pos_festa"
     },
@@ -1901,10 +2146,19 @@ const StoryNodes = {
         bg: "oponente_bar_noite",
         time: "22:30",
         dialogs: [
-            { speaker: "Narrador", text: "Enrique leva Luiza a um barzinho aconchegante e descontraído. A música é baixa, perfeita pra conversar." },
+            { 
+                speaker: "Narrador", 
+                text: "Enrique leva Luiza a um barzinho aconchegante e descontraído. A música é baixa, perfeita pra conversar.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "Lá fora a chuva cai, mas dentro do bar o calor e a luz âmbar criam um casulo perfeito.",
+                    [WeatherTypes.FRIO]: "O frio lá fora contrasta com o calor do bar. Luiza agradece por estar em um lugar aconchegante.",
+                    [WeatherTypes.SOL]: "Mesmo numa noite clara, o barzinho tem uma intimidade que a rua não oferece."
+                }
+            },
             { speaker: "Enrique", text: "Esse barzinho é especial. Eles têm drinks ótimos e a vibe é relaxada. Perfeito pra finalizar a noite.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Adorei! É mais intimista que a festa, mas ainda assim animado. Ótima escolha.", chars: ["luiza", "enrique"] },
-            { speaker: "Enrique", text: "Pensei que depois de um dia tão intenso, você gostaria de algo mais calmo. Pra gente só conversar.", chars: ["luiza", "enrique"] }
+            { speaker: "Enrique", text: "Pensei que depois de um dia tão intenso, você gostaria de algo mais calmo. Pra gente só conversar.", chars: ["luiza", "enrique"] },
+            { speaker: "Luiza", text: "Conversar com você é meu programa favorito. Não precisa de mais nada.", chars: ["luiza", "enrique"] }
         ],
         next: "pos_barzinho"
     },
@@ -1925,10 +2179,19 @@ const StoryNodes = {
         bg: "centro_noite",
         time: "22:30",
         dialogs: [
-            { speaker: "Narrador", text: "Eles escolhem um filme de última sessão. O cinema tá quase vazio, criando uma atmosfera intimista." },
+            { 
+                speaker: "Narrador", 
+                text: "Eles escolhem um filme de última sessão. O cinema está quase vazio, criando uma atmosfera intimista.",
+                weatherDialogs: {
+                    [WeatherTypes.CHUVA]: "A chuva lá fora torna o cinema um refúgio perfeito. Pipoca, escuridão e o Enrique ao lado.",
+                    [WeatherTypes.FRIO]: "O frio da madrugada fica do lado de fora. Dentro, o calor da sala e o braço do Enrique bastam.",
+                    [WeatherTypes.SOL]: "Mesmo numa noite clara, a escuridão do cinema cria um mundo só deles."
+                }
+            },
             { speaker: "Enrique", text: "Última sessão. O cinema tá quase vazio, praticamente privado pra nós. Escolhi um filme romântico, apropriado pro dia.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Perfeito! Assim a gente pode se concentrar no filme e um no outro sem distrações.", chars: ["luiza", "enrique"] },
-            { speaker: "Narrador", text: "Durante o filme, Enrique abraça Luiza. Eles assistem em silêncio, aproveitando a intimidade do momento." }
+            { speaker: "Narrador", text: "Durante o filme, Enrique abraça Luiza. Eles assistem em silêncio, aproveitando a intimidade do momento." },
+            { speaker: "Luiza", text: "*(sussurra)* Nem lembro da última cena. Só lembro do seu braço em volta de mim.", chars: ["luiza", "enrique"] }
         ],
         next: "pos_filme"
     },
@@ -1956,10 +2219,10 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles se abraçam na porta de casa, não querendo que o dia acabe." }
         ],
         choices: [
-            { text: "Convidar o Enrique pra entrar", target: "enrique_convite_entrar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
-            { text: "Dar beijo de despedida", target: "despedida_beijo", energy: 'tranquila', hearts: { enrique: 'bom' } },
-            { text: "Ficar na porta conversando", target: "ficar_mais", energy: 'cansativa', hearts: { enrique: 'neutro' } },
-            { text: "Ir direto pra casa dormir", target: "ir_dormir_cansada", energy: 'tranquila', hearts: { enrique: 'ruim' } }
+            { text: "Convidá-lo para entrar e estender a noite", target: "enrique_convite_entrar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Selar a noite com um beijo cheio de carinho", target: "despedida_beijo", context: 'fisico', energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Prolongar a despedida conversando na porta", target: "ficar_mais", energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Dizer que está exausta e ir dormir sem cerimônia", target: "ir_dormir_cansada", context: 'casa', energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -2052,6 +2315,117 @@ const StoryNodes = {
         next: "show_bad_ending_screen"
     },
 };
+
+const AMBIENCE_BY_BG = {
+    casa_luiza_manha: {
+        [WeatherTypes.SOL]: "O quarto está banhado de luz dourada. O cheiro de café vem da cozinha.",
+        [WeatherTypes.CHUVA]: "A chuva bate suave na janela. Luiza ouve as gotas enquanto se espreguiça.",
+        [WeatherTypes.FRIO]: "O ar da manhã está gelado. Luiza puxa o cobertor antes de levantar."
+    },
+    casa_luiza_noite: {
+        [WeatherTypes.SOL]: "A noite está quieta. Só o farol da rua ilumina o quarto.",
+        [WeatherTypes.CHUVA]: "A chuva continua lá fora, embalando a casa num som aconchegante.",
+        [WeatherTypes.FRIO]: "O frio da madrugada faz Luiza abraçar o travesseiro por um instante."
+    },
+    cantina_manha: {
+        [WeatherTypes.SOL]: "O sol entra pelas janelas da cafeteria, iluminando o vapor do café.",
+        [WeatherTypes.CHUVA]: "Lá fora chove, mas aqui dentro o cheiro de pão quente aquece a alma.",
+        [WeatherTypes.FRIO]: "A cafeteria está quentinha. O contraste com o frio lá fora é reconfortante."
+    },
+    cantina_tarde: {
+        [WeatherTypes.SOL]: "A luz da tarde deixa o ambiente dourado e preguiçoso.",
+        [WeatherTypes.CHUVA]: "A chuva transforma a cafeteria num refúgio perfeito para conversar.",
+        [WeatherTypes.FRIO]: "Luiza sente o calor do café nas mãos enquanto o frio fica do lado de fora."
+    },
+    praca_manha: {
+        [WeatherTypes.SOL]: "O parque está vibrante: pássaros, crianças e o cheiro de grama recém-cortada.",
+        [WeatherTypes.CHUVA]: "O chão do parque está molhado e os caminhos escorregadios. Pouca gente ousou sair.",
+        [WeatherTypes.FRIO]: "A brisa fria faz Luiza encolher os ombros, mas o parque continua lindo."
+    },
+    praca_tarde: {
+        [WeatherTypes.SOL]: "A luz dourada do fim de tarde pinta as árvores de âmbar.",
+        [WeatherTypes.CHUVA]: "As poças refletem o céu cinza. O parque ganhou um clima melancólico e bonito.",
+        [WeatherTypes.FRIO]: "O vento sopra folhas secas. Luiza sente vontade de se aconchegar no Enrique."
+    },
+    praca_noite: {
+        [WeatherTypes.SOL]: "Os postes iluminam o parque num clima de filme romântico.",
+        [WeatherTypes.CHUVA]: "A chuva noturna cria um véu de mistério sobre as árvores do parque.",
+        [WeatherTypes.FRIO]: "O frio da noite faz cada abraço valer o dobro."
+    },
+    parada_manha: {
+        [WeatherTypes.SOL]: "Do mirante, a cidade inteira brilha sob o sol da manhã.",
+        [WeatherTypes.CHUVA]: "A chuva obscurece parte da vista, mas o mirante ainda impressiona.",
+        [WeatherTypes.FRIO]: "O vento no alto é mais forte. Luiza sente o frio nas bochechas."
+    },
+    parada_noite: {
+        [WeatherTypes.SOL]: "As luzes da cidade formam um tapete de estrelas artificiais.",
+        [WeatherTypes.CHUVA]: "Gotas de chuva brilham nas luzes distantes como diamantes.",
+        [WeatherTypes.FRIO]: "O frio no mirante é intenso, mas a vista compensa qualquer desconforto."
+    },
+    centro_manha: {
+        [WeatherTypes.SOL]: "O centro está movimentado. Vitrines brilham e a cidade pulsa.",
+        [WeatherTypes.CHUVA]: "Guarda-chuvas coloridos enchem as calçadas. A chuva não para o centro.",
+        [WeatherTypes.FRIO]: "Luiza passa rápido pelas vitrines, buscando o calor das lojas."
+    },
+    centro_tarde: {
+        [WeatherTypes.SOL]: "O sol da tarde deixa as fachadas antigas ainda mais charmosas.",
+        [WeatherTypes.CHUVA]: "A chuva faz o centro esvaziar um pouco — mais espaço para o casal.",
+        [WeatherTypes.FRIO]: "O vento entre os prédios é cortante. Luiza agradece a companhia do Enrique."
+    },
+    centro_noite: {
+        [WeatherTypes.SOL]: "As luzes da cidade criam uma atmosfera mágica e intimista.",
+        [WeatherTypes.CHUVA]: "O reflexo das luzes nas calçadas molhadas parece um quadro vivo.",
+        [WeatherTypes.FRIO]: "O frio noturno convida a caminhar mais perto um do outro."
+    },
+    kalzone: {
+        [WeatherTypes.SOL]: "O restaurante tem uma vista ampla. O almoço promete ser especial.",
+        [WeatherTypes.CHUVA]: "Lá fora chove, mas dentro o aroma da comida é puro conforto.",
+        [WeatherTypes.FRIO]: "O calor do restaurante é um abraço bem-vindo depois do frio lá fora."
+    },
+    oponente_bar_jantar: {
+        [WeatherTypes.SOL]: "A luz suave do restaurante cria o clima perfeito para um jantar romântico.",
+        [WeatherTypes.CHUVA]: "A chuva lá fora só aumenta a sensação de aconchego dentro do restaurante.",
+        [WeatherTypes.FRIO]: "O ambiente quente contrasta com o frio da noite — ideal para ficarem juntos."
+    },
+    oponente_bar_noite: {
+        [WeatherTypes.SOL]: "O barzinho tem uma vibe descontraída. Música baixa, conversa boa.",
+        [WeatherTypes.CHUVA]: "A chuva batendo no telhado combina com o clima intimista do bar.",
+        [WeatherTypes.FRIO]: "Luiza aquece as mãos na xícara enquanto conversam no bar."
+    },
+    tributo_festa: {
+        [WeatherTypes.SOL]: "A festa pulsa com luzes coloridas e música alta.",
+        [WeatherTypes.CHUVA]: "A chuva lá fora não afeta a energia lá dentro — a festa segue intensa.",
+        [WeatherTypes.FRIO]: "O calor da multidão compensa o frio da madrugada lá fora."
+    }
+};
+
+function applyAmbienceToStoryNodes() {
+    Object.values(StoryNodes).forEach(node => {
+        if (!node.dialogs || !node.bg || node.skipAmbience) return;
+
+        const ambience = AMBIENCE_BY_BG[node.bg];
+        if (!ambience) return;
+
+        if (node.dialogs[0]?.weatherDialogs) return;
+
+        const ambienceTexts = new Set(Object.values(ambience));
+        const alreadyHasAmbience = node.dialogs.some(
+            dialog => dialog.speaker === 'Narrador' && ambienceTexts.has(dialog.text)
+        );
+        if (alreadyHasAmbience) return;
+
+        node.dialogs.unshift({
+            speaker: "Narrador",
+            text: ambience[WeatherTypes.SOL],
+            weatherDialogs: {
+                [WeatherTypes.CHUVA]: ambience[WeatherTypes.CHUVA],
+                [WeatherTypes.FRIO]: ambience[WeatherTypes.FRIO]
+            }
+        });
+    });
+}
+
+applyAmbienceToStoryNodes();
 
 const ChatScripts = {
     enrique: [
