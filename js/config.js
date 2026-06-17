@@ -1,7 +1,3 @@
-// ==================== CONFIGURAÇÕES DO JOGO ====================
-// Este arquivo contém todas as configurações que podem ser facilmente modificadas
-
-// [SISTEMA DE ASSETS/IMAGENS]
 const ASSETS = {
     backgrounds: {
         menu: "assets/bg_menu.jpg",
@@ -30,15 +26,36 @@ const ASSETS = {
     }
 };
 
-// [SISTEMA DE CLIMA]
 const WeatherTypes = {
     SOL: 'sol',
     CHUVA: 'chuva',
     FRIO: 'frio'
 };
 
-// Imagens de Stickers do WhatsApp
 const STICKERS = {
     love: "assets/sticker_love.png", // Sticker romântico "TE AMO"
     sticker_vigia: "assets/sticker_vigia.png" // Sticker "VIGIA"
+};
+
+const SPRITE_STYLES = {
+    luiza: {
+        color: '#ff5555',
+        glow: 'rgba(255, 85, 85, 0.4)',
+        name: 'Luiza'
+    },
+    enrique_zen: {
+        color: '#98c379',
+        glow: 'rgba(152, 195, 121, 0.4)',
+        name: 'Enrique'
+    },
+    enrique: {
+        color: '#98c379',
+        glow: 'rgba(152, 195, 121, 0.4)',
+        name: 'Enrique'
+    },
+    talita: {
+        color: '#f1fa8c',
+        glow: 'rgba(241, 250, 140, 0.4)',
+        name: 'Talita'
+    }
 };

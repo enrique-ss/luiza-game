@@ -117,8 +117,7 @@ body {
 /* Tela Final */
 #screen-final {
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.438), rgba(36, 43, 65, 0.705)), 
-                radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%),
-                url('../assets/bg_final.jpg');
+                radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 50%);
     background-size: cover;
     background-position: right;
     background-repeat: no-repeat;

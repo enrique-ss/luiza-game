@@ -1,8 +1,3 @@
-// ==================== HISTÓRIA DO JOGO ====================
-// Este arquivo contém toda a história do jogo (StoryNodes e ChatScripts)
-// Estrutura em 4 atos com horários definidos e personagens com profundidade
-
-// Roteiro Dinâmico do Jogo
 const StoryNodes = {
     // ==================== ATO 1: CAFÉ DA MANHÃ E ALMOÇO (08:00 - 13:00) ====================
     
@@ -27,12 +22,11 @@ const StoryNodes = {
                 }
             },
         ],
-        effects: { energia: 0, hearts: { enrique: 0 } },
         choices: [
-            { text: "Se arrumar com cuidado", target: "arrumar_cuidado", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Se arrumar rápido", target: "arrumar_rapido", costEnergy: 3, hearts: { enrique: 0 } },
-            { text: "Dormir mais 10 minutos", target: "dormir_mais", costEnergy: 0, hearts: { enrique: -1 } },
-            { text: "Ficar enrolando na cama", target: "ficar_enrolando", costEnergy: 0, hearts: { enrique: -2 } }
+            { text: "Se arrumar com cuidado", target: "arrumar_cuidado", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Se arrumar rápido", target: "arrumar_rapido", energy: 'cansativa', hearts: { enrique: 'bom' } },
+            { text: "Dormir mais 10 minutos", target: "dormir_mais", energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Ficar enrolando na cama", target: "ficar_enrolando", energy: 'tranquila', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -43,7 +37,6 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Luiza escolhe o vestido favorito, penteia o cabelo com atenção. Quer se sentir especial hoje." },
             { speaker: "Luiza", text: "Vou ficar bonita pro Enrique. Ele merece ver o melhor de mim." }
         ],
-        effects: { energia: -5, hearts: { enrique: 0 } },
         next: "enrique_chega_cuidado"
     },
 
@@ -54,7 +47,6 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Luiza se arruma rápido, a mente já no encontro. Tá ansiosa pra ver o Enrique." },
             { speaker: "Luiza", text: "Consegui! Tô pronta pro nosso Dia dos Namorados." }
         ],
-        effects: { energia: -3, hearts: { enrique: 0 } },
         next: "enrique_chega_rapido"
     },
 
@@ -66,7 +58,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Ah não! Dormi demais... *(se arruma correndo)* Espero que o Enrique não espere muito." },
             { speaker: "Narrador", text: "Ela se arruma às pressas, o coração batendo forte." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         next: "enrique_chega_atrasada"
     },
 
@@ -78,7 +69,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Ah não! Dormi demais... *(se arruma correndo)* Espero que o Enrique não fique bravo." },
             { speaker: "Narrador", text: "Ela se arruma às pressas, o coração batendo forte." }
         ],
-        effects: { energia: +15, hearts: { enrique: 0 } },
         next: "enrique_chega_muito_atrasada"
     },
 
@@ -96,10 +86,9 @@ const StoryNodes = {
                 chars: ["luiza", "enrique"]
             }
         ],
-        effects: { energia: +20, hearts: { enrique: 0 } },
         choices: [
-            { text: "Dar um abraço apertado e um beijo de bom dia", target: "enrique_reacao_beijo", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Ficar vermelha e agradecer timidamente", target: "enrique_reacao_timida", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Dar um abraço apertado e um beijo de bom dia", target: "enrique_reacao_beijo", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ficar vermelha e agradecer timidamente", target: "enrique_reacao_timida", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -137,10 +126,9 @@ const StoryNodes = {
                 chars: ["luiza", "enrique"]
             }
         ],
-        effects: { energia: +20, hearts: { enrique: 0 } },
         choices: [
-            { text: "Dividir o chocolate com ele na hora", target: "enrique_rapido_chocolate", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Dar um abraço rápido de agradecimento", target: "enrique_rapido_abraco", costEnergy: 0, hearts: { enrique: 1 } }
+            { text: "Dividir o chocolate com ele na hora", target: "enrique_rapido_chocolate", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar um abraço rápido de agradecimento", target: "enrique_rapido_abraco", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -178,10 +166,9 @@ const StoryNodes = {
                 chars: ["luiza", "enrique"]
             }
         ],
-        effects: { energia: +20, hearts: { enrique: 0 } },
         choices: [
-            { text: "Pedir desculpas segurando a mão dele", target: "enrique_atrasada_mao", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Dizer que vai compensar o atraso com muitos beijos", target: "enrique_atrasada_compensar", costEnergy: 8, hearts: { enrique: 1 } }
+            { text: "Pedir desculpas segurando a mão dele", target: "enrique_atrasada_mao", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dizer que vai compensar o atraso com muitos beijos", target: "enrique_atrasada_compensar", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -219,10 +206,9 @@ const StoryNodes = {
                 chars: ["luiza", "enrique"]
             }
         ],
-        effects: { energia: +20, hearts: { enrique: 0 } },
         choices: [
-            { text: "Abraçar ele bem forte pedindo mil desculpas", target: "enrique_muito_atrasada_forte", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Rir do próprio sono e agradecer a paciência dele", target: "enrique_muito_atrasada_rir", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Abraçar ele bem forte pedindo mil desculpas", target: "enrique_muito_atrasada_forte", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Rir do próprio sono e agradecer a paciência dele", target: "enrique_muito_atrasada_rir", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -255,10 +241,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Lembrei que você curte pão de queijo, por isso viemos aqui, princesa. Quero te dar o melhor dia de todos.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você é perfeito, Enrique... *(sorri com ternura)*", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Alimentar Enrique com um pedaço de bolo", target: "cafe_beijo_alimentar", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Conversar sobre morar juntos no futuro", target: "cafe_beijo_futuro", costEnergy: 10, hearts: { enrique: 1 } }
+            { text: "Alimentar Enrique com um pedaço de bolo", target: "cafe_beijo_alimentar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Conversar sobre morar juntos no futuro", target: "cafe_beijo_futuro", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -289,8 +274,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles passeiam de mãos dadas pelo parque, com um clima super apaixonado." }
         ],
         choices: [
-            { text: "Dar um beijo roubado no parque", target: "parque_beijo_roubado", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Caminhar abraçadinha com ele", target: "parque_beijo_caminhar", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Dar um beijo roubado no parque", target: "parque_beijo_roubado", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar abraçadinha com ele", target: "parque_beijo_caminhar", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -341,10 +326,9 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Enrique leva Luiza pra cafeteria. A atmosfera é suave, confortável e cheia de carinho sutil." },
             { speaker: "Enrique", text: "Está confortável aqui, princesa? Achei esse cantinho bem calmo pra nós.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Elogiar a escolha do lugar docemente", target: "cafe_timida_elogiar", costEnergy: 3, hearts: { enrique: 1 } },
-            { text: "Ficar olhando pra ele em silêncio sorrindo", target: "cafe_timida_silencio", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Elogiar a escolha do lugar docemente", target: "cafe_timida_elogiar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ficar olhando pra ele em silêncio sorrindo", target: "cafe_timida_silencio", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -375,8 +359,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam calmamente pela praça do parque, desfrutando da calmaria da manhã." }
         ],
         choices: [
-            { text: "Segurar o dedo mindinho dele timidamente", target: "parque_timido_mindinho", costEnergy: 3, hearts: { enrique: 2 } },
-            { text: "Conversar sobre a natureza ao redor", target: "parque_timido_natureza", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Segurar o dedo mindinho dele timidamente", target: "parque_timido_mindinho", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
+            { text: "Conversar sobre a natureza ao redor", target: "parque_timido_natureza", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -427,10 +411,9 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Na cafeteria, eles decidem abrir o chocolate que Enrique trouxe." },
             { speaker: "Luiza", text: "Hmm, esse chocolate é o meu favorito! Você acertou em cheio.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Passar um pouco de chocolate na bochecha dele brincando", target: "cafe_choco_brincar", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Agradecer de boca cheia deliciando-se", target: "cafe_choco_comer", costEnergy: 3, hearts: { enrique: 1 } }
+            { text: "Passar um pouco de chocolate na bochecha dele brincando", target: "cafe_choco_brincar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Agradecer de boca cheia deliciando-se", target: "cafe_choco_comer", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -462,9 +445,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "E agora, princesa? Para onde você quer que a gente vá?", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Caminhar pela praça do parque", target: "passeio_parque_chocolate", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Subir até o mirante da praça", target: "mirante_parque_chocolate", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Ir direto para o restaurante almoçar", target: "almoco_chocolate_direto", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Subir até o mirante da praça", target: "mirante_parque_chocolate", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar pela praça do parque", target: "passeio_parque_chocolate", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Ir direto para o restaurante almoçar", target: "almoco_chocolate_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
         ]
     },
 
@@ -477,8 +460,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "*(sorri e a abraça de lado)* Realmente incrível. Mas a paisagem mais bonita pra mim tá bem aqui.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Apoiar a cabeça no ombro dele", target: "mirante_choco_ombro", costEnergy: 3, hearts: { enrique: 2 } },
-            { text: "Elogiar o romantismo dele", target: "mirante_choco_elogio", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Apoiar a cabeça no ombro dele", target: "mirante_choco_ombro", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
+            { text: "Elogiar o romantismo dele", target: "mirante_choco_elogio", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -519,8 +502,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles passeiam rindo, dividindo o resto do chocolate pelo parque." }
         ],
         choices: [
-            { text: "Desafiar Enrique para uma corrida até a árvore", target: "parque_choco_corrida", costEnergy: 10, hearts: { enrique: 1 } },
-            { text: "Sentar no banco e falar sobre doces da infância", target: "parque_choco_banco", costEnergy: 5, hearts: { enrique: 2 } }
+            { text: "Desafiar Enrique para uma corrida até a árvore", target: "parque_choco_corrida", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Sentar no banco e falar sobre doces da infância", target: "parque_choco_banco", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -569,10 +552,9 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "Eles chegam animados na cafeteria aconchegante para repor as energias." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Comer rapidamente para aproveitar mais o dia", target: "cafe_rapido_comer", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Relaxar e pedir um suco especial", target: "cafe_rapido_suco", costEnergy: 0, hearts: { enrique: 1 } }
+            { text: "Comer rapidamente para aproveitar mais o dia", target: "cafe_rapido_comer", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Relaxar e pedir um suco especial", target: "cafe_rapido_suco", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -604,9 +586,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Para onde quer ir agora, princesa? Você escolhe!", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Caminhar rápido pela praça", target: "passeio_parque_rapido", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Subir correndo até o mirante", target: "mirante_parque_rapido", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Ir logo para o restaurante", target: "almoco_rapido_direto", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Subir correndo até o mirante", target: "mirante_parque_rapido", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar rápido pela praça", target: "passeio_parque_rapido", energy: 'neutra', hearts: { enrique: 'bom' } },
+            { text: "Ir logo para o restaurante", target: "almoco_rapido_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
         ]
     },
 
@@ -618,8 +600,8 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Ufa! Subida rápida, hein? Mas olha essa vista. Vale a pena cada degrau.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Desafiar ele para ver quem grita mais alto", target: "mirante_rapido_gritar", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Apostar uma corrida de descida", target: "mirante_rapido_corrida", costEnergy: 8, hearts: { enrique: 2 } }
+            { text: "Desafiar ele para ver quem grita mais alto", target: "mirante_rapido_gritar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Apostar uma corrida de descida", target: "mirante_rapido_corrida", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -661,8 +643,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam em passo acelerado, felizes com o dinamismo do dia." }
         ],
         choices: [
-            { text: "Tirar uma foto com o celular no parque", target: "parque_rapido_foto", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Observar os patos no lago", target: "parque_rapido_patos", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Tirar uma foto com o celular no parque", target: "parque_rapido_foto", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Observar os patos no lago", target: "parque_rapido_patos", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -711,10 +693,9 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "Eles chegam na cafeteria e Enrique a ajuda a sentar, mantendo o tom reconfortante." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Acariciar as mãos dele e agradecer a paciência", target: "cafe_atrasada_mao_agradecer", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Perguntar o que ele fez enquanto esperava", target: "cafe_atrasada_mao_perguntar", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Acariciar as mãos dele e agradecer a paciência", target: "cafe_atrasada_mao_agradecer", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Perguntar o que ele fez enquanto esperava", target: "cafe_atrasada_mao_perguntar", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -745,8 +726,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles andam em sintonia pelo parque, a leveza do perdão acalmando o clima." }
         ],
         choices: [
-            { text: "Sentar sob as sombras das árvores", target: "parque_atrasada_sombras", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Tomar uma água de coco fresca juntos", target: "parque_atrasada_coco", costEnergy: 8, hearts: { enrique: 1 } }
+            { text: "Sentar sob as sombras das árvores", target: "parque_atrasada_sombras", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
+            { text: "Tomar uma água de coco fresca juntos", target: "parque_atrasada_coco", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -795,10 +776,9 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "Eles se sentam para o café da manhã, a promessa de compensação ainda no ar." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Dar um beijo estalado na bochecha dele agora", target: "cafe_compensar_beijo_agora", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Piscar pra ele de forma provocativa", target: "cafe_compensar_piscar", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Dar um beijo estalado na bochecha dele agora", target: "cafe_compensar_beijo_agora", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Piscar pra ele de forma provocativa", target: "cafe_compensar_piscar", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -830,9 +810,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Princesa, qual a nossa próxima parada para continuar sua compensação? *(sorri de lado)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Dar as mãos e ir para a praça", target: "passeio_parque_atrasada_compensar", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Ir ao mirante para namorarmos com privacidade", target: "mirante_parque_compensar", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Ir direto para o restaurante", target: "almoco_compensar_direto", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Dar as mãos e ir para a praça", target: "passeio_parque_atrasada_compensar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ir ao mirante para namorarmos com privacidade", target: "mirante_parque_compensar", energy: 'cansativa', hearts: { enrique: 'bom' } },
+            { text: "Ir direto para o restaurante", target: "almoco_compensar_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
         ]
     },
 
@@ -844,8 +824,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Aqui está tão calmo... Perfeito para continuarmos o que eu prometi.", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Dar um beijo demorado e apaixonado nele", target: "mirante_compensar_beijo", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Fazer um cafuné e elogiar a beleza dele", target: "mirante_compensar_cafune", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Dar um beijo demorado e apaixonado nele", target: "mirante_compensar_beijo", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Fazer um cafuné e elogiar a beleza dele", target: "mirante_compensar_cafune", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -886,8 +866,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham animados, com Enrique ansioso pelos gestos de Luiza." }
         ],
         choices: [
-            { text: "Dar as mãos e correr rindo", target: "parque_compensar_correr", costEnergy: 10, hearts: { enrique: 1 } },
-            { text: "Dar um abraço apertado por trás dele", target: "parque_compensar_por_tras", costEnergy: 8, hearts: { enrique: 2 } }
+            { text: "Dar as mãos e correr rindo", target: "parque_compensar_correr", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar um abraço apertado por trás dele", target: "parque_compensar_por_tras", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -936,10 +916,9 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "Na cafeteria, eles escolhem uma mesa calma após o abraço aliviado na chegada." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Insistir para pagar a conta do café", target: "cafe_muito_forte_pagar", costEnergy: 10, hearts: { enrique: 2 } },
-            { text: "Dar as mãos e fazer um carinho suave", target: "cafe_muito_forte_carinho", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Insistir para pagar a conta do café", target: "cafe_muito_forte_pagar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar as mãos e fazer um carinho suave", target: "cafe_muito_forte_carinho", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -970,8 +949,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham com calma, curtindo o final da manhã sob o sol." }
         ],
         choices: [
-            { text: "Comprar um sorvete e dividir", target: "parque_forte_sorvete", costEnergy: 5, hearts: { enrique: 2 } },
-            { text: "Descansar debaixo de uma árvore conversando", target: "parque_forte_descanso", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Comprar um sorvete e dividir", target: "parque_forte_sorvete", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Descansar debaixo de uma árvore conversando", target: "parque_forte_descanso", energy: 'tranquila', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1020,10 +999,9 @@ const StoryNodes = {
         dialogs: [
             { speaker: "Narrador", text: "A cafeteria está animada. O clima é descontraído e cheio de boas risadas." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Fazer piada com a pressa para se arrumar", target: "cafe_muito_rir_pressa", costEnergy: 3, hearts: { enrique: 1 } },
-            { text: "Pedir um pão de queijo gigante", target: "cafe_muito_rir_gigante", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Fazer piada com a pressa para se arrumar", target: "cafe_muito_rir_pressa", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Pedir um pão de queijo gigante", target: "cafe_muito_rir_gigante", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1055,9 +1033,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "E agora, Luiza? Onde vamos descarregar toda essa sua energia de sono acumulado? *(ri)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Ir brincar na praça do parque", target: "passeio_parque_muito_rir", costEnergy: 5, hearts: { enrique: 1 } },
-            { text: "Ir rir da vista alta no mirante", target: "mirante_parque_rir", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Ir comer mais no restaurante direto", target: "almoco_rir_direto", costEnergy: 0, hearts: { enrique: 0 } }
+            { text: "Ir brincar na praça do parque", target: "passeio_parque_muito_rir", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ir rir da vista alta no mirante", target: "mirante_parque_rir", energy: 'cansativa', hearts: { enrique: 'bom' } },
+            { text: "Ir comer mais no restaurante direto", target: "almoco_rir_direto", energy: 'tranquila', hearts: { enrique: 'neutro' } }
         ]
     },
 
@@ -1069,8 +1047,8 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Olha as casinhas lá embaixo parecendo formigas! *(ri)*", chars: ["luiza", "enrique"] }
         ],
         choices: [
-            { text: "Fazer cócegas nele de repente", target: "mirante_rir_cocegas", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Fazer uma pose engraçada para foto", target: "mirante_rir_pose", costEnergy: 5, hearts: { enrique: 1 } }
+            { text: "Fazer cócegas nele de repente", target: "mirante_rir_cocegas", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Fazer uma pose engraçada para foto", target: "mirante_rir_pose", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1111,8 +1089,8 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles caminham alegremente, brincando sobre como Luiza gosta de dormir." }
         ],
         choices: [
-            { text: "Imitar as pessoas andando no parque para fazer Enrique rir", target: "parque_rir_imitar", costEnergy: 8, hearts: { enrique: 2 } },
-            { text: "Cantar uma música engraçada juntos", target: "parque_rir_cantar", costEnergy: 8, hearts: { enrique: 1 } }
+            { text: "Imitar as pessoas andando no parque para fazer Enrique rir", target: "parque_rir_imitar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Cantar uma música engraçada juntos", target: "parque_rir_cantar", energy: 'neutra', hearts: { enrique: 'bom' } }
         ]
     },
 
@@ -1164,12 +1142,11 @@ const StoryNodes = {
             { speaker: "Narrador", text: "A tarde começa com o sol a pino. Enrique tem várias opções pra o passeio da tarde." },
             { speaker: "Enrique", text: "Pra tarde, pensei em algumas coisas que a gente pode fazer. Qual você prefere?", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         choices: [
-            { text: "Workshop de pintura", target: "pintura_tarde", costEnergy: 20, hearts: { enrique: 1 } },
-            { text: "Ir ao cinema", target: "cinema_tarde", costEnergy: 15, hearts: { enrique: 0 } },
-            { text: "Visitar museu de arte", target: "museu_tarde", costEnergy: 12, hearts: { enrique: -1 } },
-            { text: "Procurar a Talita", target: "encontro_talita", costEnergy: 10, hearts: { enrique: -2 } }
+            { text: "Workshop de pintura", target: "pintura_tarde", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ir ao cinema", target: "cinema_tarde", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Visitar museu de arte", target: "museu_tarde", energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Procurar a Talita", target: "encontro_talita", energy: 'cansativa', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1182,7 +1159,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Você é incrível, Enrique! Se lembra de tudo.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Durante o filme, Enrique segura a mão de Luiza. Eles riem juntos das cenas engraçadas e se emocionam nos momentos dramáticos." }
         ],
-        effects: { energia: -15, hearts: { enrique: 0 } },
         next: "pos_cinema"
     },
 
@@ -1195,12 +1171,11 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Eu amei! E você segurando minha mão o tempo todo... *(sorri)* Foi perfeito.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Bora dar um rolê antes do jantar? Ainda dá tempo.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         choices: [
-            { text: "Ir à livraria", target: "livraria", costEnergy: 8, hearts: { enrique: 1 } },
-            { text: "Voltar pro parque", target: "volta_parque", costEnergy: 12, hearts: { enrique: 0 } },
-            { text: "Olhar vitrines no centro", target: "passeio_centro", costEnergy: 10, hearts: { enrique: -1 } },
-            { text: "Ir direto pra casa", target: "ir_casa_cansada", costEnergy: 0, hearts: { enrique: -2 } }
+            { text: "Ir à livraria", target: "livraria", energy: 'tranquila', hearts: { enrique: 'muito bom' } },
+            { text: "Voltar pro parque", target: "volta_parque", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Olhar vitrines no centro", target: "passeio_centro", energy: 'cansativa', hearts: { enrique: 'neutro' } },
+            { text: "Ir direto pra casa", target: "ir_casa_cansada", energy: 'tranquila', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1213,7 +1188,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Isso é tão criativo! Vamos se divertir muito. E não se preocupe, a gente aprende juntos.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles passam a tarde pintando, rindo dos erros e se ajudando. Enrique pinta com dedicação, mesmo sem experiência." }
         ],
-        effects: { energia: -20, hearts: { enrique: 0 } },
         next: "pos_pintura"
     },
 
@@ -1226,7 +1200,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Ficou lindo, Enrique! Você tem talento. E a minha... *(sorri)* Pintei você.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "*(emociona-se)* Princesa... Esse é o presente mais bonito que já ganhei. Vou guardar com carinho.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1239,7 +1212,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Isso é maravilhoso, Enrique. Adoro quando você mostra interesse nas coisas que eu amo.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles caminham pelas galerias de mãos dadas. Enrique faz perguntas genuínas sobre as obras, realmente interessado." }
         ],
-        effects: { energia: -12, hearts: { enrique: 0 } },
         next: "pos_museu"
     },
 
@@ -1252,7 +1224,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Fico feliz que tenha gostado. Arte é sobre sentir, e você tem um coração que sabe sentir, Enrique.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Com você eu sinto tudo de forma mais intensa, princesa. É difícil explicar.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1265,7 +1236,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Só olhar, tá bom? Não precisamos comprar nada. Só passear já é ótimo.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "De boa, amor. O importante é a gente estar junto. Qualquer lugar fica legal com você.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -10, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1279,7 +1249,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Sobre a gente? De que jeito, amor?", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Sobre como cada momento conta. Como eu quero guardar todos os nossos momentos juntos.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -8, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1292,7 +1261,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "É... só tô exausta. Desculpa por estragar o passeio.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Relaxa, princesa. Seu descanso é mais importante. Bora pra casa.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1307,7 +1275,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "*(sorri)* Nossos netos? Você já tá planejando tão longe?", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Se é com você, eu planejo tudo, princesa. Quero passar a vida contigo.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -12, hearts: { enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1327,12 +1294,11 @@ const StoryNodes = {
             { speaker: "Enrique", text: "*(fica visivelmente sem jeito)* Putz... que chato.", chars: ["enrique", "talita"] },
             { speaker: "Luiza", text: "Talita, deixa o Enrique respirar! *(ri)* Mas conte tudo depois, quero saber!", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -10, hearts: { talita: 0 } },
         choices: [
-            { text: "Convidar a Talita", target: "talita_convite", costEnergy: 15, hearts: { talita: 2 } },
-            { text: "Conversar um pouco", target: "talita_conversa_rapida", costEnergy: 5, hearts: { talita: 0 } },
-            { text: "Ir embora rápido", target: "talita_ir_embora", costEnergy: 0, hearts: { talita: -1 } },
-            { text: "Fingir que não a viu", target: "talita_ignorar", costEnergy: 0, hearts: { talita: -2 } }
+            { text: "Convidar a Talita", target: "talita_convite", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Conversar um pouco", target: "talita_conversa_rapida", energy: 'neutra', hearts: { talita: 'bom' } },
+            { text: "Ir embora rápido", target: "talita_ir_embora", energy: 'neutra', hearts: { talita: 'neutro' } },
+            { text: "Fingir que não a viu", target: "talita_ignorar", energy: 'tranquila', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1343,7 +1309,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Talita, quer passear com a gente? Seria legal você ir junto!", chars: ["luiza", "talita"] },
             { speaker: "Enrique", text: "Claro, se a Talita quiser ir, será um prazer.", chars: ["enrique", "talita"] }
         ],
-        effects: { energia: -5, hearts: { talita: 0 } },
         next: "talita_aceita"
     },
 
@@ -1363,12 +1328,11 @@ const StoryNodes = {
             { speaker: "Talita", text: "ISSO EXPLICA TANTO COISA! MAS SÉRIO, A LUIZA TÃO SORTUDADA! VOCÊ TÃO ATENTO E GENTIL! MAS ME DIZ, VOCÊ JÁ VIAM ALGUMA FANFIC DE NARUTO? PORQUE TEM UMA QUE É TÃO BOA QUE...", chars: ["luiza", "talita"] },
             { speaker: "Luiza", text: "Talita, deixa o Enrique em paz! *(ri)* Mas é bom ver vocês conversando.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -15, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Ir na livraria", target: "talita_livraria", costEnergy: 10, hearts: { talita: 2 } },
-            { text: "Tomar café na cafeteria", target: "talita_cafe", costEnergy: 8, hearts: { talita: 1 } },
-            { text: "Caminhar pelo centro", target: "talita_centro", costEnergy: 12, hearts: { talita: -1 } },
-            { text: "Sugerir que a Talita vá embora", target: "talita_despedida", costEnergy: 0, hearts: { talita: -2 } }
+            { text: "Ir na livraria", target: "talita_livraria", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Tomar café na cafeteria", target: "talita_cafe", energy: 'neutra', hearts: { talita: 'bom' } },
+            { text: "Caminhar pelo centro", target: "talita_centro", energy: 'cansativa', hearts: { talita: 'neutro' } },
+            { text: "Sugerir que a Talita vá embora", target: "talita_despedida", energy: 'tranquila', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1385,7 +1349,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Intensa, mas parece gente boa, amor. E ela entendeu bem sobre... você sabe.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Isso é importante pra mim. Que vocês se deem bem.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -5, hearts: { talita: 0, enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1401,7 +1364,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Desculpa por ter sido tão rápida.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Relaxa, princesa. É importante você ter tempo com suas amigas também.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -5, hearts: { talita: 0, enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1417,7 +1379,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "É... só não queria interromper nosso dia.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "É... mas ela é sua amiga, princesa.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -5, hearts: { talita: 0, enrique: 0 } },
         next: "fim_ato2"
     },
 
@@ -1432,10 +1393,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Valeu. Vou dar uma olhada depois.", chars: ["luiza", "talita"] },
             { speaker: "Talita", text: "VOCÊ VAI AMAR! E DEPOIS A GENTE PODE DISCUTIR SOBRE OS SHIPS! EU TENHO TANTAS TEORIAS! MAS SÉRIO, LUIZA, VOCÊ DEVERIA LER TAMBÉM, AINDA QUE VOCÊ SÓ FIQUE LENDO AQUELES ROMANCES CHATOS!", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -10, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Comprar um dos mangás recomendados por ela", target: "talita_livraria_manga", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Defender seus romances clássicos com carinho", target: "talita_livraria_defesa", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Comprar um dos mangás recomendados por ela", target: "talita_livraria_manga", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Defender seus romances clássicos com carinho", target: "talita_livraria_defesa", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1470,10 +1430,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Achei o lugar bem legal.", chars: ["luiza", "talita"] },
             { speaker: "Luiza", text: "Talita, para de flertar com todo mundo! *(ri)* Mas o café realmente parece bom.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -8, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Pagar o café e o pão de queijo da Talita", target: "talita_cafe_pagar", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Sugerir dividir a conta com ela", target: "talita_cafe_dividir", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Pagar o café e o pão de queijo da Talita", target: "talita_cafe_pagar", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Sugerir dividir a conta com ela", target: "talita_cafe_dividir", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1507,10 +1466,9 @@ const StoryNodes = {
             { speaker: "Talita", text: "OLHA AQUELA LOJA! EU COMPREI MINHA PRIMEIRA CALCINHA LÁ! FOI UM MARCO NA MINHA VIDA! E AQUELE OUTRO LUGAR FOI ONDE EU TIVE MEU PRIMEIRO BEIJO COM UMA MENINA! FOI TÃO ROMÂNTICO MAS ELA ME DEPOIS ME BLOQUEOU NO WHATSAPP!", chars: ["luiza", "talita"] },
             { speaker: "Enrique", text: "Putz... que mancada.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -12, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Rir e se divertir com as histórias escandalosas dela", target: "talita_centro_rir", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Pedir discretamente para ela falar um pouco mais baixo", target: "talita_centro_baixo", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Rir e se divertir com as histórias escandalosas dela", target: "talita_centro_rir", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Pedir discretamente para ela falar um pouco mais baixo", target: "talita_centro_baixo", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1543,10 +1501,9 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Talita olha para o relógio e arregala os olhos, se preparando para correr." },
             { speaker: "Talita", text: "GENTE, PRECISO VOAR! SE EU ATRASAR MINHA MÃE ME TRANCA NO QUARTO! MAS FOI MARAVILHOSO! ME MANDEM WHATSAPP!", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: +5, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Dar um abraço de urso bem apertado nela", target: "talita_despedida_abraco", costEnergy: 0, hearts: { talita: 2 } },
-            { text: "Dar um tchauzinho carinhoso", target: "talita_despedida_tchau", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Dar um abraço de urso bem apertado nela", target: "talita_despedida_abraco", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Dar um tchauzinho carinhoso", target: "talita_despedida_tchau", energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1582,7 +1539,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "A tarde foi muito boa, amor. Mas o dia não acabou. Preparei algo especial pra noite.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você tá me surpreendendo a cada momento, Enrique. O que mais você tem guardado?", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         next: "inicio_ato3"
     },
 
@@ -1601,12 +1557,11 @@ const StoryNodes = {
             }},
             { speaker: "Luiza", text: "Adoro a cidade à noite! Vamos sim.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         choices: [
-            { text: "Subir ao mirante", target: "mirante_noite", costEnergy: 15, reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { enrique: 1 } },
-            { text: "Caminhar pelo parque", target: "parque_noite", costEnergy: 12, hearts: { enrique: 0 } },
-            { text: "Passear pelo centro", target: "passeio_noturno", costEnergy: 10, hearts: { enrique: -1 } },
-            { text: "Chamar a Talita", target: "talita_noite", costEnergy: 15, reqHearts: { talita: 3 }, hearts: { enrique: -2 } }
+            { text: "Subir ao mirante", target: "mirante_noite", energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { enrique: 'muito bom' } },
+            { text: "Caminhar pelo parque", target: "parque_noite", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Passear pelo centro", target: "passeio_noturno", energy: 'cansativa', hearts: { enrique: 'neutro' } },
+            { text: "Chamar a Talita", target: "talita_noite", energy: 'cansativa', reqHearts: { talita: 3 }, hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1619,7 +1574,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Você tá muito charmoso hoje, Enrique. Sério, não sei o que eu fiz pra merecer alguém tão atencioso.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Você merece tudo de bom, princesa. Fico feliz em poder te ver assim.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -10, hearts: { enrique: 0 } },
         next: "jantar_noturno"
     },
 
@@ -1632,7 +1586,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "*(emociona-se)* Enrique... Isso é tão poético. Não sabia que você tinha esse lado.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Você me faz muito bem, princesa. Só tenho a agradecer.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -15, hearts: { enrique: 0 } },
         next: "jantar_noturno"
     },
 
@@ -1645,7 +1598,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Lembro! Foi quando você me disse que gostava de mim pela primeira vez.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Tava nervoso demais pra falar que gostava de você, princesa. Mas foi a melhor coisa que fiz.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -12, hearts: { enrique: 0 } },
         next: "jantar_noturno"
     },
 
@@ -1664,12 +1616,11 @@ const StoryNodes = {
             { speaker: "Talita", text: "EU NUNCA ATRAPALHO! SOU A MELHOR WINGWOMAN DA HISTÓRIA! VOU AJUDAR VOCÊS A SEREM AINDA MAIS ROMÂNTICOS! E TALVEZ ENCONTRE ALGUÉM PRA MIM NO PROCESSO!", chars: ["luiza", "talita"] },
             { speaker: "Enrique", text: "Isso... soa intenso. Mas... obrigado.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -15, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Subir ao mirante com Talita", target: "talita_mirante_noite", costEnergy: 15, reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { talita: 2 } },
-            { text: "Caminhar pelo parque com Talita", target: "talita_parque_noite", costEnergy: 12, hearts: { talita: 1 } },
-            { text: "Passear pelo centro com Talita", target: "talita_passeio_noturno", costEnergy: 10, hearts: { talita: -1 } },
-            { text: "Pedir pra Talita ir embora", target: "talita_jantar", costEnergy: 0, hearts: { talita: -2 } }
+            { text: "Subir ao mirante com Talita", target: "talita_mirante_noite", energy: 'cansativa', reqWeather: [WeatherTypes.SOL, WeatherTypes.FRIO], hearts: { talita: 'muito bom' } },
+            { text: "Caminhar pelo parque com Talita", target: "talita_parque_noite", energy: 'cansativa', hearts: { talita: 'bom' } },
+            { text: "Passear pelo centro com Talita", target: "talita_passeio_noturno", energy: 'neutra', hearts: { talita: 'neutro' } },
+            { text: "Pedir pra Talita ir embora", target: "talita_jantar", energy: 'tranquila', hearts: { talita: 'ruim' } }
         ]
     },
 
@@ -1680,10 +1631,9 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles passeiam pelo centro iluminado com Talita. Ela não para de comentar sobre tudo e todos." },
             { speaker: "Talita", text: "A CIDADE À NOITE É TÃO LINDA! TÃO ROMÂNTICA! MAS EU SÓ TENHO DATE RUIM, GENTE! MEUS DATES PARECEM FILTRADOS DO PIOR JEITO!", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -10, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Fazer uma pose dramática de ninja para confortá-la", target: "talita_passeio_pose", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Rir e brincar sobre a má sorte dela nos dates", target: "talita_passeio_rir", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Fazer uma pose dramática de ninja para confortá-la", target: "talita_passeio_pose", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Rir e brincar sobre a má sorte dela nos dates", target: "talita_passeio_rir", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1718,10 +1668,9 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Vista bonita mesmo, amor. Mas não entendo nada de Naruto.", chars: ["luiza", "talita"] },
             { speaker: "Luiza", text: "Talita, tudo se resume a Naruto com você, né? *(ri)*", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -15, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Tirar uma selfie engraçada com a Talita", target: "talita_mirante_selfie", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Admirar a vista noturna abraçando a amiga", target: "talita_mirante_vista", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Tirar uma selfie engraçada com a Talita", target: "talita_mirante_selfie", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Admirar a vista noturna abraçando a amiga", target: "talita_mirante_vista", energy: 'tranquila', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1755,10 +1704,9 @@ const StoryNodes = {
             { speaker: "Talita", text: "O PARQUE À NOITE É TÃO MISTERIOSO! PARECE UMA FLORESTA MÁGICA DE ANIME! MAS TÁ UM POUCO FRIO, NÉ?", chars: ["luiza", "talita"] },
             { speaker: "Enrique", text: "É, a temperatura caiu bastante à noite.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: -12, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Sugerir dividir um chocolate quente para aquecer", target: "talita_parque_chocolate", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Caminhar sob as árvores ouvindo as teorias dela", target: "talita_parque_caminhar", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Sugerir dividir um chocolate quente para aquecer", target: "talita_parque_chocolate", energy: 'tranquila', hearts: { talita: 'muito bom' } },
+            { text: "Caminhar sob as árvores ouvindo as teorias dela", target: "talita_parque_caminhar", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1792,10 +1740,9 @@ const StoryNodes = {
             { speaker: "Talita", text: "MEU DEUS! ESSE LUGAR É TÃO CHIQUE! EU NUNCA VI TANTA ELEGÂNCIA! E OLHA SÓ, ENRIQUE, VOCÊ É TÃO DE SORTE DE TER A LUIZA! ELA É PERFEITA! VOCÊS SÃO O CASAL MAIS FOFO!", chars: ["luiza", "talita"] },
             { speaker: "Enrique", text: "Valeu. A Luiza é tudo pra mim mesmo.", chars: ["luiza", "talita"] }
         ],
-        effects: { energia: +10, hearts: { talita: 0, enrique: 0 } },
         choices: [
-            { text: "Dizer que a Talita é a melhor amiga do mundo e abraçá-la", target: "talita_jantar_melhor_amiga", costEnergy: 5, hearts: { talita: 2 } },
-            { text: "Brincar sobre a obsessão hilária dela por Naruto e Sasuke", target: "talita_jantar_obsessao", costEnergy: 0, hearts: { talita: 1 } }
+            { text: "Dizer que a Talita é a melhor amiga do mundo e abraçá-la", target: "talita_jantar_melhor_amiga", energy: 'cansativa', hearts: { talita: 'muito bom' } },
+            { text: "Brincar sobre a obsessão hilária dela por Naruto e Sasuke", target: "talita_jantar_obsessao", energy: 'neutra', hearts: { talita: 'bom' } }
         ]
     },
 
@@ -1833,12 +1780,11 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Quero que nossa noite seja da hora, princesa. Você merece.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles jantam conversando sobre o dia, seus sentimentos e o quanto se amam." }
         ],
-        effects: { energia: +10, hearts: { enrique: 0 } },
         choices: [
-            { text: "Fazer declaração de amor", target: "declaracao_especial", costEnergy: 15, hearts: { enrique: 1 } },
-            { text: "Agradecer por tudo", target: "agradecimento", costEnergy: 5, hearts: { enrique: 0 } },
-            { text: "Ficar em silêncio", target: "ficar_silencio", costEnergy: 0, hearts: { enrique: -1 } },
-            { text: "Reclamar da comida", target: "reclamar_comida", costEnergy: 0, hearts: { enrique: -2 } }
+            { text: "Fazer declaração de amor", target: "declaracao_especial", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Agradecer por tudo", target: "agradecimento", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Ficar em silêncio", target: "ficar_silencio", energy: 'tranquila', hearts: { enrique: 'neutro' } },
+            { text: "Reclamar da comida", target: "reclamar_comida", energy: 'neutra', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1850,7 +1796,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "*(emociona-se)* Ouvir isso é muito bom, princesa. Também te amo demais. Você mudou minha vida pra melhor.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "E você mudou a minha. Cada dia ao seu lado é um presente que eu não mereço, mas que agradeço todos os dias.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -15, hearts: { enrique: 0 } },
         next: "fim_ato3"
     },
 
@@ -1862,7 +1807,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Putz, sério amor? Pensei que era muito bom pelas notas... Desculpa pelo erro na escolha.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Enrique desvia o olhar, parecendo extremamente decepcionado consigo mesmo por ter frustrado a Luiza." }
         ],
-        effects: { energia: 0, hearts: { enrique: 0 } },
         next: "fim_ato3"
     },
 
@@ -1874,7 +1818,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "*(pensa)* Sabe... não foi um momento específico. Foi cada vez que te vi sorrir. Cada vez que seus olhos brilharam. Cada momento que percebi que você tá feliz. Isso é meu favorito.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você sabe como me deixar emocionada. Meu momento favorito foi... todos. Porque estive com você.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -8, hearts: { enrique: 0 } },
         next: "fim_ato3"
     },
 
@@ -1886,7 +1829,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Não precisa agradecer, Luiza. Fazer você feliz é a maior recompensa. Ver você sorrindo é tudo que eu preciso.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você é único, Enrique. Nunca conheci alguém com um coração tão grande.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -5, hearts: { enrique: 0 } },
         next: "fim_ato3"
     },
 
@@ -1900,7 +1842,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Sim, a comida é ótima. Mas... esperava que a gente conversasse mais.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Desculpa. Só não tenho muito pra dizer.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         next: "fim_ato3"
     },
 
@@ -1912,7 +1853,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "O jantar foi perfeito, mas o dia ainda não acabou. Quer fazer mais uma coisa comigo?", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Com certeza! O que mais você tem planejado?", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         next: "inicio_ato4"
     },
 
@@ -1925,12 +1865,11 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Já é tarde da noite, mas a energia ainda tá alta. Enrique oferece opções pra finalizar o Dia dos Namorados." },
             { speaker: "Enrique", text: "Pra finalizar nosso Dia dos Namorados, temos algumas opções. O que você prefere?", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         choices: [
-            { text: "Ir a um barzinho", target: "barzinho", costEnergy: 15, hearts: { enrique: 1 } },
-            { text: "Ver filme no cinema", target: "filme_noite", costEnergy: 12, hearts: { enrique: 0 } },
-            { text: "Ir para uma balada", target: "festa_noite", costEnergy: 20, hearts: { enrique: -1 } },
-            { text: "Ir direto pra casa", target: "casa_final", costEnergy: 0, hearts: { enrique: -2 } }
+            { text: "Ir a um barzinho", target: "barzinho", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Ver filme no cinema", target: "filme_noite", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Ir para uma balada", target: "festa_noite", energy: 'cansativa', hearts: { enrique: 'neutro' } },
+            { text: "Ir direto pra casa", target: "casa_final", energy: 'tranquila', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -1943,7 +1882,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Claro! Vamos nos divertir! Não importa se dança bem ou não, o importante é se divertir juntos.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles dançam juntos, rindo dos movimentos desajeitados de Enrique. A noite fica ainda mais especial." }
         ],
-        effects: { energia: -20, hearts: { enrique: 0 } },
         next: "pos_festa"
     },
 
@@ -1956,7 +1894,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Você tá certo. Hoje foi especial, mas todos os dias com você são especiais.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Vamos pra casa? Acho que a gente precisa descansar depois de tudo isso.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -10, hearts: { enrique: 0 } },
         next: "casa_final"
     },
 
@@ -1969,7 +1906,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Adorei! É mais intimista que a festa, mas ainda assim animado. Ótima escolha.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Pensei que depois de um dia tão intenso, você gostaria de algo mais calmo. Pra gente só conversar.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -15, hearts: { enrique: 0 } },
         next: "pos_barzinho"
     },
 
@@ -1982,7 +1918,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Eu também. Cada Dia dos Namorados com você vai ser especial. E cada dia normal também.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Vamos pra casa? Tô cansado, mas feliz. Muito feliz.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -8, hearts: { enrique: 0 } },
         next: "casa_final"
     },
 
@@ -1995,7 +1930,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Perfeito! Assim a gente pode se concentrar no filme e um no outro sem distrações.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Durante o filme, Enrique abraça Luiza. Eles assistem em silêncio, aproveitando a intimidade do momento." }
         ],
-        effects: { energia: -12, hearts: { enrique: 0 } },
         next: "pos_filme"
     },
 
@@ -2008,7 +1942,6 @@ const StoryNodes = {
             { speaker: "Luiza", text: "Eu sinto o mesmo. Você é meu filme favorito, Enrique. A melhor história da minha vida.", chars: ["luiza", "enrique"] },
             { speaker: "Enrique", text: "Vamos pra casa? Foi um dia longo, mas incrível. Não quero que acabe, mas preciso descansar com você.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -10, hearts: { enrique: 0 } },
         next: "casa_final"
     },
 
@@ -2022,12 +1955,11 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Você é a pessoa mais amada do mundo, Luiza. E eu prometo que vou continuar te fazendo feliz todos os dias.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Eles se abraçam na porta de casa, não querendo que o dia acabe." }
         ],
-        effects: { energia: +5, hearts: { enrique: 0 } },
         choices: [
-            { text: "Convidar o Enrique pra entrar", target: "enrique_convite_entrar", costEnergy: 15, hearts: { enrique: 1 } },
-            { text: "Dar beijo de despedida", target: "despedida_beijo", costEnergy: 5, hearts: { enrique: 0 } },
-            { text: "Ficar na porta conversando", target: "ficar_mais", costEnergy: 10, hearts: { enrique: -1 } },
-            { text: "Ir direto pra casa dormir", target: "ir_dormir_cansada", costEnergy: 0, hearts: { enrique: -2 } }
+            { text: "Convidar o Enrique pra entrar", target: "enrique_convite_entrar", energy: 'cansativa', hearts: { enrique: 'muito bom' } },
+            { text: "Dar beijo de despedida", target: "despedida_beijo", energy: 'tranquila', hearts: { enrique: 'bom' } },
+            { text: "Ficar na porta conversando", target: "ficar_mais", energy: 'cansativa', hearts: { enrique: 'neutro' } },
+            { text: "Ir direto pra casa dormir", target: "ir_dormir_cansada", energy: 'tranquila', hearts: { enrique: 'ruim' } }
         ]
     },
 
@@ -2038,7 +1970,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Luiza, quer que eu entre? Ainda é cedo, podemos conversar mais um pouco se você quiser.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Sim, eu queria muito! Adoraria conversar mais com você.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -5, hearts: { enrique: 0 } },
         next: "enrique_entra"
     },
 
@@ -2050,7 +1981,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Luiza, hoje mudou algo em mim. Me fez perceber o quanto eu te amo e o quanto quero construir com você.", chars: ["luiza", "enrique"] },
             { speaker: "Luiza", text: "Você mudou algo em mim também. Me fez sentir que o amor real existe. E tá aqui, com você.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -15, hearts: { enrique: 0 } },
         next: "whatsapp_noite"
     },
 
@@ -2062,7 +1992,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Foi um prazer. *(Dá um beijo de boa noite)* Até amanhã, meu amor.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Luiza entra em casa com o coração cheio. O Dia dos Namorados foi inesquecível." }
         ],
-        effects: { energia: -5, hearts: { enrique: 0 } },
         next: "whatsapp_noite"
     },
 
@@ -2076,7 +2005,6 @@ const StoryNodes = {
             { speaker: "Enrique", text: "Boa noite. Te amo.", chars: ["luiza", "enrique"] },
             { speaker: "Narrador", text: "Luiza entra em casa e vai direto pra cama. O dia foi bom, mas ela tá muito cansada." }
         ],
-        effects: { energia: +15, hearts: { enrique: 0 } },
         next: "whatsapp_noite"
     },
 
@@ -2089,18 +2017,15 @@ const StoryNodes = {
             { speaker: "Narrador", text: "Eles ficam abraçados na porta, aproveitando cada último momento juntos." },
             { speaker: "Enrique", text: "Cada segundo com você é um presente. Feliz Dia dos Namorados, Luiza. Te amo.", chars: ["luiza", "enrique"] }
         ],
-        effects: { energia: -10, hearts: { enrique: 0 } },
         next: "whatsapp_noite"
     },
 
-    // ================= WHATSAPP DA NOITE =================
     whatsapp_noite: {
         bg: "casa_luiza_noite",
         time: "01:15",
         dialogs: [
             { speaker: "Narrador", text: "Luiza tá em casa, sentindo-se a pessoa mais feliz do mundo. Ela decide mandar uma mensagem pro Enrique." }
         ],
-        effects: { energia: +15 },
         isChat: true,
         chatPartner: "enrique"
     },
@@ -2128,7 +2053,6 @@ const StoryNodes = {
     },
 };
 
-// Diálogos de Chat do WhatsApp
 const ChatScripts = {
     enrique: [
         { author: "Enrique", text: "Chegou bem em casa?", time: "01:20" },

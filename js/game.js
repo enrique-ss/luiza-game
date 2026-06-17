@@ -1,29 +1,3 @@
-// As configurações (ASSETS, WeatherTypes, STICKERS) estão em config.js
-
-// Configuração de estilos por sprite - fácil de modificar
-const SPRITE_STYLES = {
-    luiza: {
-        color: '#ff5555',
-        glow: 'rgba(255, 85, 85, 0.4)',
-        name: 'Luiza'
-    },
-    enrique_zen: {
-        color: '#98c379',
-        glow: 'rgba(152, 195, 121, 0.4)',
-        name: 'Enrique'
-    },
-    enrique: {
-        color: '#98c379',
-        glow: 'rgba(152, 195, 121, 0.4)',
-        name: 'Enrique'
-    },
-    talita: {
-        color: '#f1fa8c',
-        glow: 'rgba(241, 250, 140, 0.4)',
-        name: 'Talita'
-    }
-};
-
 let currentWeather = WeatherTypes.SOL;
 let previousSpeaker = null;
 
@@ -38,38 +12,10 @@ function setWeather(weather) {
     currentWeather = weather;
     console.log('Weather set to:', currentWeather);
     try {
-        updateWeatherIconHUD();
-        console.log('updateWeatherIconHUD() finished');
+        updateWeatherIcon(document.getElementById('hud-time-val')?.textContent || '08:00');
     } catch (error) {
-        console.error('Error in updateWeatherIconHUD:', error);
+        console.error('Error in updateWeatherIcon:', error);
     }
-}
-
-function updateWeatherIconHUD() {
-    console.log('updateWeatherIconHUD() called');
-    const weatherIcon = document.getElementById('weather-icon');
-    console.log('Weather icon element:', weatherIcon);
-    console.log('Current weather:', currentWeather);
-    if (!weatherIcon) {
-        console.log('Weather icon element not found!');
-        return;
-    }
-    
-    const icons = {
-        [WeatherTypes.SOL]: 'fa-sun',
-        [WeatherTypes.CHUVA]: 'fa-cloud-rain',
-        [WeatherTypes.FRIO]: 'fa-snowflake'
-    };
-    
-    const newIconClass = icons[currentWeather] || icons[WeatherTypes.SOL];
-    console.log('Setting icon class to:', newIconClass);
-    
-    // Force update by setting className directly with fa-solid prefix
-    weatherIcon.className = 'fa-solid ' + newIconClass;
-    console.log('Weather icon className set to:', weatherIcon.className);
-    
-    // Force a reflow to ensure the icon updates
-    void weatherIcon.offsetWidth;
 }
 
 
@@ -80,7 +26,24 @@ let coracoes = {
 };
 let currentNodeKey = null;
 let energiaLuiza = 80;
-let roupaEscolhida = "";
+
+const ENERGY_EFFECTS = {
+    'cansativa': -10,
+    'neutra': 0,
+    'tranquila': 15
+};
+
+const HEART_EFFECTS = {
+    'muito bom': 1,
+    'bom': 0.5,
+    'neutro': 0,
+    'ruim': -1
+};
+
+function applyEnergyEffect(effectName) {
+    const change = ENERGY_EFFECTS[effectName] || 0;
+    energiaLuiza = Math.max(0, Math.min(100, energiaLuiza + change));
+}
 
 let dialogHistory = [];
 let storyQueue = [];
@@ -89,10 +52,6 @@ let typingInterval = null;
 let isTyping = false;
 let currentText = "";
 let chatStep = 0;
-
-// SVG_SPRITES removidos - usando imagens PNG reais dos assets
-
-// A história (StoryNodes e ChatScripts) está em history.js
 
 // Inicializar o jogo ao carregar
 window.onload = function() {
@@ -119,25 +78,6 @@ function preloadSprites() {
     }
 }
 
-// Função para atualizar o sprite da Luiza
-function updateLuizaSprite(nodeKey) {
-    const imgLuiza = document.getElementById('img-luiza');
-    if (imgLuiza && ASSETS.sprites.luiza) {
-        imgLuiza.style.display = '';
-        imgLuiza.src = ASSETS.sprites.luiza;
-    }
-}
-
-function fallbackSprite(character) {
-    const img = document.getElementById(`img-${character}`);
-    // Apenas esconde se a imagem realmente falhou ao tentar carregar um src válido
-    if (img && img.src && !img.src.endsWith('/') && img.getAttribute('src') !== '') {
-        img.style.display = 'none'; // Esconde a imagem quebrada
-    }
-}
-
-// Tornar a função globalmente acessível antes do carregamento das imagens
-window.fallbackSprite = fallbackSprite;
 
 // Criar estrelas piscando na tela de boa noite
 function createStars(containerId = 'stars-container') {
@@ -162,11 +102,10 @@ function startGame() {
         enrique: 0,
         talita: 0
     };
-    roupaEscolhida = "";
     lastTime = "08:00";
 
-    // Gerar Energia aleatória entre 80 e 100 pontos
-    energiaLuiza = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+    // Gerar Energia aleatória entre 90 e 100 pontos
+    energiaLuiza = Math.floor(Math.random() * (100 - 90 + 1)) + 90;
 
     dialogHistory = [];
 
@@ -212,9 +151,8 @@ function closeModal(modalId) {
 }
 
 function getNameColor(name) {
-    if (name === 'Enrique') return 'var(--primary)';
-    if (name === 'Luiza') return '#ff5555';
-    return 'var(--text-muted)';
+    const key = getCharacterKeyFromSpeaker(name);
+    return SPRITE_STYLES[key]?.color || 'var(--text-muted)';
 }
 
 // Atualizar Informações na HUD
@@ -263,34 +201,26 @@ function updateHeartMeter(elementId, amount, maxHearts = 5) {
     console.log('Heart meter atualizado:', elementId, 'amount:', amount, 'filled:', filled, 'maxHearts:', maxHearts);
 }
 
-// Atualiza o ícone de clima no HUD com base no horário e no clima do dia
 function updateWeatherIcon(time) {
-    const icon = document.getElementById('hud-weather-icon');
-    if (!icon) return;
+    const weatherIcon = document.getElementById('weather-icon');
+    if (!weatherIcon) return;
 
-    // Converte "HH:MM" para minutos desde meia-noite
-    const [hStr, mStr] = (time || '05:30').split(':');
+    const [hStr, mStr] = (time || '08:00').split(':');
     const totalMin = parseInt(hStr, 10) * 60 + parseInt(mStr, 10);
 
-    // Noite só depois das 20:00
     if (totalMin >= 1200) {
-        icon.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        weatherIcon.className = 'fa-solid fa-moon';
         return;
     }
 
-    // Usa o clima sorteado no início
-    switch (climaDoDia) {
-        case 'chuva':
-            icon.innerHTML = '<i class="fa-solid fa-cloud-rain"></i>';
-            break;
-        case 'frio':
-            icon.innerHTML = '<i class="fa-solid fa-snowflake"></i>';
-            break;
-        case 'calor':
-        default:
-            icon.innerHTML = '<i class="fa-solid fa-sun"></i>';
-            break;
-    }
+    const icons = {
+        [WeatherTypes.SOL]: 'fa-sun',
+        [WeatherTypes.CHUVA]: 'fa-cloud-rain',
+        [WeatherTypes.FRIO]: 'fa-snowflake'
+    };
+
+    const newIconClass = icons[currentWeather] || 'fa-sun';
+    weatherIcon.className = 'fa-solid ' + newIconClass;
 }
 
 // Aplica decaimento de energia baseado no tempo que passou
@@ -308,8 +238,8 @@ function applyEnergyDecay(currentTime) {
     const diffMinutes = totalMin2 - totalMin1;
 
     if (diffMinutes > 0) {
-        // Decaimento: 1 ponto de energia a cada 30 minutos
-        const energyLoss = Math.floor(diffMinutes / 30);
+        // Decaimento: 1 ponto de energia a cada 60 minutos
+        const energyLoss = Math.floor(diffMinutes / 60);
         if (energyLoss > 0) {
             energiaLuiza = Math.max(0, energiaLuiza - energyLoss);
             updateHUD();
@@ -346,17 +276,7 @@ function loadNode(nodeKey) {
         return;
     }
 
-    if (nodeKey.startsWith("roupa_")) {
-        roupaEscolhida = nodeKey.replace("roupa_", "");
-        setupClimaDialogs();
 
-        // Aplica efeitos APÓS setupClimaDialogs (que já definiu os effects corretos)
-        const roupaNode = StoryNodes[nodeKey];
-        if (roupaNode?.effects) {
-            energiaLuiza = Math.max(0, Math.min(100, energiaLuiza + (roupaNode.effects.energia || 0)));
-            updateHUD();
-        }
-    }
 
     const node = StoryNodes[nodeKey];
     if (!node) return;
@@ -377,8 +297,7 @@ function loadNode(nodeKey) {
 
     hideAllSprites();
 
-    // Atualiza o sprite da Luiza
-    updateLuizaSprite(nodeKey);
+
 
     storyQueue = [...node.dialogs];
     queueIndex = 0;
@@ -422,17 +341,21 @@ function playNextDialog(currentNodeObj) {
             startWhatsAppChat(currentNodeObj.chatPartner);
         } else if (currentNodeObj.choices) {
             if (currentNodeObj.effects) {
-                energiaLuiza += (currentNodeObj.effects.energia || 0);
-                // Hearts are only updated via explicit choices, not automatic node effects
+                if (currentNodeObj.effects.energia) {
+                    applyEnergyEffect(currentNodeObj.effects.energia);
+                }
                 updateHUD();
             }
             showChoices(currentNodeObj.choices);
         } else if (currentNodeObj.next === 'show_goodnight_screen') {
             showGoodnightScreen();
+        } else if (currentNodeObj.next === 'show_bad_ending_screen') {
+            showBadEndingScreen();
         } else if (currentNodeObj.next) {
             if (currentNodeObj.effects) {
-                energiaLuiza += (currentNodeObj.effects.energia || 0);
-                // Hearts are only updated via explicit choices, not automatic node effects
+                if (currentNodeObj.effects.energia) {
+                    applyEnergyEffect(currentNodeObj.effects.energia);
+                }
                 updateHUD();
             }
             loadNode(currentNodeObj.next);
@@ -449,16 +372,16 @@ function applyHeartEffects(heartEffects) {
     console.log('Aplicando heart effects:', heartEffects);
     console.log('Antes - Enrique:', coracoes.enrique, 'Talita:', coracoes.talita);
 
-    Object.entries(heartEffects).forEach(([personagem, amount]) => {
+    Object.entries(heartEffects).forEach(([personagem, effectName]) => {
         if (coracoes[personagem] === undefined) {
             console.log('Personagem não encontrado no coracoes:', personagem);
             return;
         }
         
-        // Aplica a mudança de corações limitando entre 0 e 10
-        coracoes[personagem] = Math.max(0, Math.min(10, coracoes[personagem] + amount));
+        const change = HEART_EFFECTS[effectName] || 0;
+        coracoes[personagem] = Math.max(0, Math.min(10, coracoes[personagem] + change));
         
-        console.log('Aplicado', amount, 'corações para', personagem, '- Total agora:', coracoes[personagem]);
+        console.log('Aplicado', change, 'corações para', personagem, '- Total agora:', coracoes[personagem]);
     });
     
     // Aplica exclusão mútua: total máximo de 10 corações entre Enrique e Talita
@@ -553,17 +476,7 @@ function showDialogText(speaker, text, activeCharKey) {
     }, 18);
 }
 
-function getActiveCharacterKeys(activeCharKey, speakerCharKey) {
-    if (Array.isArray(activeCharKey)) {
-        return activeCharKey.filter(Boolean);
-    }
 
-    if (activeCharKey) {
-        return [activeCharKey];
-    }
-
-    return speakerCharKey ? [speakerCharKey] : [];
-}
 
 function getCharacterKeyFromSpeaker(speaker) {
     const normalizedSpeaker = getSpeakerClassName(speaker);
@@ -715,8 +628,8 @@ function showChoices(choices) {
                     if (choice.hearts) {
                         applyHeartEffects(choice.hearts);
                     }
-                    if (choice.costEnergy) {
-                        energiaLuiza -= choice.costEnergy;
+                    if (choice.energy) {
+                        applyEnergyEffect(choice.energy);
                     }
                     updateHUD();
                     loadNode(choice.target);
@@ -737,12 +650,10 @@ function showChoices(choices) {
                 <span>${choice.text}</span>
             `;
             btn.onclick = () => {
-                // Deduct energy cost if specified
-                if (choice.costEnergy) {
-                    energiaLuiza -= choice.costEnergy;
+                if (choice.energy) {
+                    applyEnergyEffect(choice.energy);
                 }
                 
-                // Apply hearts change from choice
                 if (choice.hearts) {
                     applyHeartEffects(choice.hearts);
                 }
@@ -840,8 +751,9 @@ function nextChatStep(partner) {
         for (const key of chatNodes) {
             const n = StoryNodes[key];
             if (n?.isChat && n?.chatPartner === partner && n?.effects) {
-                energiaLuiza += (n.effects.energia || 0);
-                // Hearts are only updated via explicit choices, not automatic chat node effects
+                if (n.effects.energia) {
+                    applyEnergyEffect(n.effects.energia);
+                }
                 updateHUD();
                 break;
             }
@@ -854,6 +766,11 @@ function nextChatStep(partner) {
 function showGoodnightScreen() {
     createStars('stars-container-goodnight');
     switchScreen('screen-goodnight');
+}
+
+// ================= TELA DE FIM DE JOGO RUIM =================
+function showBadEndingScreen() {
+    switchScreen('screen-final');
 }
 
 // Funções Auxiliares de Navegação

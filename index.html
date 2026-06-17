@@ -43,16 +43,11 @@
 
         <!-- ==================== TELA FINAL ==================== -->
         <div id="screen-final" class="screen">
-            <div class="logo-container">
-                <h1 class="game-title">Um dia Doce</h1>
-            </div>
-            
-            <div class="menu-buttons">
-                <button class="btn btn-primary" onclick="location.reload()">
+            <div class="goodnight-container">
+                <h1 class="goodnight-title">Boa noite, Luiza</h1>
+                <p class="goodnight-subtitle">Espero que teu dia tenha sido doce</p>
+                <button class="btn btn-primary" onclick="startGame()" style="z-index: 10; max-width: 250px; margin-top: 2rem;">
                     <i class="fa-solid fa-rotate-right"></i> Recomeçar
-                </button>
-                <button class="btn" onclick="openModal('about-modal')">
-                    <i class="fa-solid fa-heart"></i> Sobre o Presente
                 </button>
             </div>
         </div>
@@ -169,15 +164,15 @@
             <div class="sprites-layer">
                 <!-- Enrique -->
                 <div id="sprite-enrique" class="character-sprite-container">
-                    <img id="img-enrique" class="sprite-img" src="" alt="Enrique" onerror="fallbackSprite('enrique')">
+                    <img id="img-enrique" class="sprite-img" src="" alt="Enrique">
                 </div>
                 <!-- Luiza -->
                 <div id="sprite-luiza" class="character-sprite-container">
-                    <img id="img-luiza" class="sprite-img" src="" alt="Luiza" onerror="fallbackSprite('luiza')">
+                    <img id="img-luiza" class="sprite-img" src="" alt="Luiza">
                 </div>
                 <!-- Talita -->
                 <div id="sprite-talita" class="character-sprite-container">
-                    <img id="img-talita" class="sprite-img" src="" alt="Talita" onerror="fallbackSprite('talita')">
+                    <img id="img-talita" class="sprite-img" src="" alt="Talita">
                 </div>
             </div>
 
@@ -234,10 +229,10 @@
         <div id="screen-goodnight" class="screen">
             <div class="stars-container" id="stars-container-goodnight"></div>
             <div class="goodnight-container">
-                <h1 class="goodnight-title">Boa noite, Luiza.</h1>
-                <p class="goodnight-subtitle">Espero que teu Dia dos Namorados tenha sido perfeito.</p>
-                <button class="btn btn-primary" onclick="location.reload()" style="z-index: 10; max-width: 250px; margin-top: 2rem;">
-                    <i class="fa-solid fa-rotate-right"></i> Recomeçar o dia
+                <h1 class="goodnight-title">Boa noite, Luiza</h1>
+                <p class="goodnight-subtitle">Espero que teu dia tenha sido doce</p>
+                <button class="btn btn-primary" onclick="startGame()" style="z-index: 10; max-width: 250px; margin-top: 2rem;">
+                    <i class="fa-solid fa-rotate-right"></i> Recomeçar
                 </button>
             </div>
         </div>
