@@ -243,17 +243,24 @@ function updateHUD() {
     const dBarEn = document.getElementById('drawer-bar-energia');
     if (dValEn) dValEn.textContent = energiaLuiza;
     if (dBarEn) dBarEn.style.width = energiaLuiza + '%';
+    
+    console.log('HUD atualizado - Enrique:', coracoes.enrique, 'Talita:', coracoes.talita, 'Energia:', energiaLuiza);
 }
 
 function updateHeartMeter(elementId, amount, maxHearts = 5) {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+        console.log('Elemento não encontrado:', elementId);
+        return;
+    }
 
     const filled = Math.max(0, Math.min(maxHearts, amount));
     element.innerHTML = Array.from({ length: maxHearts }, (_, index) => {
         const className = index < filled ? 'heart-full' : 'heart-empty';
         return `<span class="${className}">♥</span>`;
     }).join('');
+    
+    console.log('Heart meter atualizado:', elementId, 'amount:', amount, 'filled:', filled, 'maxHearts:', maxHearts);
 }
 
 // Atualiza o ícone de clima no HUD com base no horário e no clima do dia
@@ -416,7 +423,7 @@ function playNextDialog(currentNodeObj) {
         } else if (currentNodeObj.choices) {
             if (currentNodeObj.effects) {
                 energiaLuiza += (currentNodeObj.effects.energia || 0);
-                applyHeartEffects(currentNodeObj.effects.hearts);
+                // Hearts are only updated via explicit choices, not automatic node effects
                 updateHUD();
             }
             showChoices(currentNodeObj.choices);
@@ -425,7 +432,7 @@ function playNextDialog(currentNodeObj) {
         } else if (currentNodeObj.next) {
             if (currentNodeObj.effects) {
                 energiaLuiza += (currentNodeObj.effects.energia || 0);
-                applyHeartEffects(currentNodeObj.effects.hearts);
+                // Hearts are only updated via explicit choices, not automatic node effects
                 updateHUD();
             }
             loadNode(currentNodeObj.next);
@@ -434,14 +441,46 @@ function playNextDialog(currentNodeObj) {
 }
 
 function applyHeartEffects(heartEffects) {
-    if (!heartEffects) return;
+    if (!heartEffects) {
+        console.log('Heart effects é null/undefined');
+        return;
+    }
+
+    console.log('Aplicando heart effects:', heartEffects);
+    console.log('Antes - Enrique:', coracoes.enrique, 'Talita:', coracoes.talita);
 
     Object.entries(heartEffects).forEach(([personagem, amount]) => {
-        if (coracoes[personagem] === undefined) return;
-        // Enrique tem máximo de 10 corações
-        const maxHearts = 10;
-        coracoes[personagem] = Math.max(0, Math.min(maxHearts, coracoes[personagem] + amount));
+        if (coracoes[personagem] === undefined) {
+            console.log('Personagem não encontrado no coracoes:', personagem);
+            return;
+        }
+        
+        // Aplica a mudança de corações limitando entre 0 e 10
+        coracoes[personagem] = Math.max(0, Math.min(10, coracoes[personagem] + amount));
+        
+        console.log('Aplicado', amount, 'corações para', personagem, '- Total agora:', coracoes[personagem]);
     });
+    
+    // Aplica exclusão mútua: total máximo de 10 corações entre Enrique e Talita
+    const totalHearts = coracoes.enrique + coracoes.talita;
+    console.log('Total de corações:', totalHearts);
+    if (totalHearts > 10) {
+        // Se passou de 10, reduz proporcionalmente para manter o total em 10
+        const excess = totalHearts - 10;
+        const enriqueRatio = coracoes.enrique / totalHearts;
+        const talitaRatio = coracoes.talita / totalHearts;
+        
+        coracoes.enrique = Math.max(0, coracoes.enrique - Math.ceil(excess * enriqueRatio));
+        coracoes.talita = Math.max(0, coracoes.talita - Math.ceil(excess * talitaRatio));
+        
+        console.log('Excesso de corações detectado. Reduzindo proporcionalmente.');
+    }
+    
+    // Garante que cada um não passe de 10 individualmente e não seja menor que 0
+    coracoes.enrique = Math.max(0, Math.min(10, coracoes.enrique));
+    coracoes.talita = Math.max(0, Math.min(10, coracoes.talita));
+    
+    console.log('Depois - Enrique:', coracoes.enrique, 'Talita:', coracoes.talita);
 }
 
 // Exibir Diálogo com efeito de digitação gradual
@@ -802,7 +841,7 @@ function nextChatStep(partner) {
             const n = StoryNodes[key];
             if (n?.isChat && n?.chatPartner === partner && n?.effects) {
                 energiaLuiza += (n.effects.energia || 0);
-                applyHeartEffects(n.effects.hearts);
+                // Hearts are only updated via explicit choices, not automatic chat node effects
                 updateHUD();
                 break;
             }
